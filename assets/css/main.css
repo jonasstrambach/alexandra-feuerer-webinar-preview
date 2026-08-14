@@ -643,7 +643,7 @@ strong {
   50%      { transform: translateY(-8px); }
 }
 
-/* Zweites Widget: Testimonial-Avatare + "Über 100 Investoren" –
+/* Zweites Widget: Testimonial-Avatare + "Über 2.000 Kunden" –
    rechts positioniert, Timing versetzt, damit beide Karten
    nicht synchron schweben */
 .float-card--investors {
@@ -2454,6 +2454,69 @@ html[data-js] [data-scroll-reveal].is-revealed {
 }
 
 @media (max-width: 600px) {
+  /* Hero kompakt: CTA-Button soll auch auf kleineren iPhones (< iPhone Max)
+     ohne Scrollen sichtbar sein (Kundenfeedback) – schlankere Topbar, engere
+     Abstände, kleinere Headline und CTA per order vor den Countdown gezogen */
+  .topbar__inner {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .brand__logo {
+    width: 40px;
+    height: 38px;
+  }
+
+  .brand__name {
+    font-size: 1.16rem;
+  }
+
+  .brand__claim {
+    font-size: 0.56rem;
+  }
+
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 34px;
+  }
+
+  .badge-live {
+    padding: 7px 15px;
+    font-size: 0.72rem;
+  }
+
+  .hero h1 {
+    margin: 15px 0 12px;
+    font-size: clamp(1.66rem, 7vw, 2.1rem);
+  }
+
+  .hero h1 .subline {
+    margin-top: 9px;
+  }
+
+  .hero__sub {
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+
+  .hero__meta {
+    margin-bottom: 18px;
+  }
+
+  /* CTA direkt nach den Chips, Countdown + Trust-Zeile dahinter */
+  .hero__copy .countdown {
+    order: 1;
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+
+  .hero__copy .hero__trust {
+    order: 2;
+  }
+
   /* Vorteile: einspaltig, kompaktere Karten */
   .benefits__grid {
     grid-template-columns: 1fr;
@@ -2560,6 +2623,53 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
   .faq__a {
     padding: 0 16px 18px 50px;
+  }
+}
+
+/* Sehr schmale Displays (z. B. iPhone SE/mini, 375px): Chips weiter
+   verdichten, damit alle drei in einer Zeile bleiben */
+@media (max-width: 400px) {
+  .hero__meta {
+    gap: 5px;
+  }
+
+  .chip {
+    padding: 6px 8px;
+    font-size: 0.74rem;
+    gap: 4px;
+  }
+
+  .chip svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Niedrige Viewports (kleinere iPhones mit sichtbarer Safari-Leiste):
+   Hero weiter stauchen, damit der CTA-Button ohne Scrollen sichtbar ist */
+@media (max-width: 600px) and (max-height: 700px) {
+  .hero__copy {
+    padding-top: 14px;
+  }
+
+  .badge-live {
+    font-size: 0.68rem;
+    padding: 6px 13px;
+  }
+
+  .hero h1 {
+    margin-top: 12px;
+    font-size: clamp(1.5rem, 6.4vw, 1.9rem);
+  }
+
+  .hero__sub {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .hero__meta {
+    margin-bottom: 14px;
   }
 }
 
