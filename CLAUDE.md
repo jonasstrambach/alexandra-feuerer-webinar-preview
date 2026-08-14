@@ -88,8 +88,14 @@ Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
 
 ## Offene Punkte
 - Anmelde-Mechanik (E-Mail-/Webinar-Tool) anbinden
-- Weitere Sektionen: "Das lernst Du", finale CTA
-  (Über Alexandra ist umgesetzt: dunkle Navy-Sektion `#alexandra`, Bild `assets/img/alexandra-about.jpg`;
+- Weitere Sektionen: "Das lernst Du"
+  (Finale CTA ist umgesetzt: `#anmelden` (`.finalcta`) nach dem FAQ, dunkles Navy-Band –
+  großes Serif-Zitat, Verknappungs-Chip „Maximal 500 Teilnehmer", zweiter Countdown
+  (Countdown-JS unterstützt mehrere `[data-countdown]`-Instanzen), CTA
+  `data-track-position="final"`, Freisteller `assets/img/alexandra-final-cutout.webp` =
+  Brustbild per macOS-Vision (`VNGeneratePersonSegmentationRequest`, accurate) aus
+  „Home (2).webp" freigestellt, unten bündig mit Sektionskante;
+  Über Alexandra ist umgesetzt: dunkle Navy-Sektion `#alexandra`, Bild `assets/img/alexandra-about.jpg`;
   FAQ ist umgesetzt: `#faq`, 5 Einwände als natives `<details name="faq">`-Akkordeon –
   neue Sektionen davor einfügen, FAQ bleibt letzte Sektion vor finaler CTA/Footer;
   Video-Testimonials umgesetzt: `#stimmen` nach "Über Alexandra", 4 Videos im
@@ -99,8 +105,12 @@ Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
   kompaktes Alexandra-Zitat zum „zu alt"-Einwand mit Watermark „ZU ALT?",
   Avatar `assets/img/alexandra-avatar.jpg` = Gesichts-Crop aus `alexandra-portrait.webp`;
   Kurz-Bewertungen umgesetzt: `#bewertungen` (`.reviews`) zwischen `#stimmen` und FAQ –
-  kompaktes dunkles Trust-Band, 5 Karten mit je 5 Sternen, runde Avatare
+  kompaktes dunkles Trust-Band mit hellen Creme-Karten (Kundenfeedback: nicht dunkel
+  auf dunkel), 5 Karten mit je 5 Sternen, Zitat-Zeichen oben rechts
+  (CSS `::after`), runde Avatare
   `assets/img/review-*.jpg` (96×96, quadratisch beschnitten aus „Alexandra Feurer bilder");
+  auf Desktop ≥ 601px Scroll-Snap-Slider (`.reviews__slider`, 2 bzw. ab 900px 3 Karten
+  pro Ansicht, Pfeile + Punkte unter dem Track, JS `setupReviewsSlider` in `main.js`);
   auf Mobile < 600px Sticky-Karten-Stapel wie Vorteile-Sektion – gemeinsame JS-Mechanik
   `setupCardStack` in `main.js`)
 - Optin-Variante B für A/B-Test

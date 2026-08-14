@@ -1456,11 +1456,12 @@ html[data-js] [data-scroll-reveal].is-revealed {
   flex-direction: column;
   gap: 12px;
   padding: 20px 22px 22px;
-  /* Opaker Verlauf – Pflicht für den Mobile-Stapel (nichts scheint durch) */
-  background: linear-gradient(165deg, #303d55, #27334a);
-  border: 1px solid rgba(191, 161, 74, 0.32);
+  /* Helle Karte als Kontrast zum dunklen Navy-Band; opaker Verlauf –
+     Pflicht für den Mobile-Stapel (nichts scheint durch) */
+  background: linear-gradient(165deg, #fffdf8, #f6efe2);
+  border: 1px solid rgba(191, 161, 74, 0.45);
   border-radius: var(--radius);
-  box-shadow: 0 10px 26px rgba(15, 22, 36, 0.32);
+  box-shadow: 0 14px 32px rgba(15, 22, 36, 0.45);
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
@@ -1481,7 +1482,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
 .review:hover {
   transform: translateY(-4px);
-  border-color: rgba(191, 161, 74, 0.55);
+  border-color: rgba(191, 161, 74, 0.75);
 }
 
 .review__top {
@@ -1500,7 +1501,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
   height: 46px;
   border-radius: 50%;
   background: linear-gradient(150deg, var(--champagne-light), var(--champagne-soft));
-  border: 1.5px solid rgba(249, 226, 181, 0.65);
+  border: 1.5px solid rgba(191, 161, 74, 0.55);
   object-fit: cover;
   font-family: var(--font-serif);
   font-size: 1.3rem;
@@ -1518,7 +1519,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
 .review__name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--cream);
+  color: var(--navy-deep);
 }
 
 .review__role {
@@ -1526,13 +1527,13 @@ html[data-js] [data-scroll-reveal].is-revealed {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--champagne-soft);
+  color: var(--gold-deep);
 }
 
 .review__stars {
   display: inline-flex;
   gap: 3px;
-  color: #e3c56f;
+  color: var(--gold);
 }
 
 .review__quote {
@@ -1542,7 +1543,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
   line-height: 1.5;
   font-weight: 300;
   letter-spacing: 0.01em;
-  color: rgba(253, 251, 247, 0.94);
+  color: rgba(39, 51, 73, 0.92);
 }
 
 @media (max-width: 720px) {
@@ -1563,6 +1564,13 @@ html[data-js] [data-scroll-reveal].is-revealed {
    Eine Kartenzeile mit Scroll-Snap hält die Sektion flach; Pfeile + Punkte
    unter dem Track. Auf Mobile (< 601px) bleiben Spalte/Sticky-Stapel aktiv,
    die Controls sind dort ausgeblendet. JS: setupReviewsSlider in main.js. */
+
+/* Kein Slider auf Mobile: Pfeile/Punkte grundsätzlich verstecken –
+   sichtbar nur auf Desktop UND wenn der Track überläuft (has-overflow). */
+.reviews__controls {
+  display: none;
+}
+
 @media (min-width: 601px) {
   .reviews__slider {
     max-width: 1020px;
@@ -1591,7 +1599,6 @@ html[data-js] [data-scroll-reveal].is-revealed {
   }
 
   .reviews__controls {
-    display: none;
     align-items: center;
     justify-content: center;
     gap: 18px;
@@ -1978,7 +1985,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
 .finalcta__photo {
   position: relative;
-  width: min(400px, 100%);
+  width: min(460px, 100%);
   height: auto;
   filter: drop-shadow(0 24px 48px rgba(15, 22, 34, 0.55));
 }
