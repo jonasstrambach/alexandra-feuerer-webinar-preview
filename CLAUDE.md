@@ -89,12 +89,17 @@ Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
 ## Offene Punkte
 - Anmelde-Mechanik (E-Mail-/Webinar-Tool) anbinden
 - Weitere Sektionen: "Das lernst Du"
-  (Finale CTA ist umgesetzt: `#anmelden` (`.finalcta`) nach dem FAQ, dunkles Navy-Band –
-  großes Serif-Zitat, Verknappungs-Chip „Maximal 500 Teilnehmer", zweiter Countdown
-  (Countdown-JS unterstützt mehrere `[data-countdown]`-Instanzen), CTA
-  `data-track-position="final"`, Freisteller `assets/img/alexandra-final-cutout.webp` =
-  Brustbild per macOS-Vision (`VNGeneratePersonSegmentationRequest`, accurate) aus
-  „Home (2).webp" freigestellt, unten bündig mit Sektionskante;
+  (Finale CTA ist umgesetzt: `#anmelden` (`.finalcta`) nach dem FAQ – kompakte **helle**
+  Creme-Box (`.finalcta__box`, abgerundet, Gold-Rand) auf Creme-Grund, kein Full-Width-Band
+  und nicht dunkel (beides Kundenfeedback) – Serif-Zitat, Verknappungs-Chip „Maximal
+  500 Teilnehmer", zweiter Countdown in heller Standard-Variante (Countdown-JS unterstützt
+  mehrere `[data-countdown]`-Instanzen), CTA `data-track-position="final"`, Bild = derselbe
+  Hero-Freisteller `assets/img/alexandra-cutout.png` (Kundenwunsch, nicht über 304px
+  hochskalieren!), läuft unten + rechts randbündig aus der Box (negative Margin kaschiert
+  die Schnittkanten, Box hat `overflow: hidden`); die Alternativ-Freisteller
+  `assets/img/alexandra-final-cutout.webp` (Porträt sitzend, weißer Blazer, aus
+  `alexandra-portrait.webp` per `VNGeneratePersonSegmentationRequest` accurate) liegt
+  ungenutzt bereit, z. B. für Variante B;
   Über Alexandra ist umgesetzt: dunkle Navy-Sektion `#alexandra`, Bild `assets/img/alexandra-about.jpg`;
   FAQ ist umgesetzt: `#faq`, 5 Einwände als natives `<details name="faq">`-Akkordeon –
   neue Sektionen davor einfügen, FAQ bleibt letzte Sektion vor finaler CTA/Footer;
@@ -112,6 +117,8 @@ Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
   auf Desktop ≥ 601px Scroll-Snap-Slider (`.reviews__slider`, 2 bzw. ab 900px 3 Karten
   pro Ansicht, Pfeile + Punkte unter dem Track, JS `setupReviewsSlider` in `main.js`);
   auf Mobile < 600px Sticky-Karten-Stapel wie Vorteile-Sektion – gemeinsame JS-Mechanik
-  `setupCardStack` in `main.js`)
+  `setupCardStack` in `main.js`; Achtung: Sektion braucht `overflow: clip` statt
+  `hidden`, sonst wird die Sektion zum Scroll-Container und `position: sticky`
+  des Karten-Stapels greift nicht)
 - Optin-Variante B für A/B-Test
 - Höher aufgelöstes Hero-Freisteller-Bild vom Kunden anfragen (aktuell 440×660)

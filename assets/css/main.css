@@ -1385,7 +1385,9 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
 .reviews {
   position: relative;
-  overflow: hidden;
+  /* clip statt hidden: hidden machte die Sektion zum Scroll-Container und
+     hebelte damit den Mobile-Sticky-Karten-Stapel (position: sticky) aus */
+  overflow: clip;
   background:
     radial-gradient(820px 460px at 88% 0%, rgba(191, 161, 74, 0.16), transparent 60%),
     radial-gradient(700px 420px at 0% 100%, rgba(205, 186, 153, 0.10), transparent 60%),
@@ -1810,29 +1812,37 @@ html[data-js] [data-scroll-reveal].is-revealed {
 }
 
 /* ============================================================
-   Finale CTA (#anmelden) – großes dunkles Abschluss-Band:
-   Zitat + Freisteller (sitzend) + Verknappung + Countdown + CTA
+   Finale CTA (#anmelden) – kompakte dunkle Box auf hellem Grund:
+   Zitat + Freisteller + Verknappung + Countdown + CTA
    ============================================================ */
 
 .finalcta {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(920px 580px at 78% 88%, rgba(191, 161, 74, 0.20), transparent 62%),
-    radial-gradient(700px 460px at 6% 10%, rgba(191, 161, 74, 0.10), transparent 60%),
-    linear-gradient(155deg, #1e2839 0%, var(--navy-deep) 45%, var(--navy) 100%);
-  color: var(--cream);
-  padding: 92px 0 0;
+  padding: 8px 0 88px;
 }
 
-/* Feines Karo wie in Hero/Über-Alexandra, hell auf Navy */
-.finalcta::before {
+/* Die eigentliche Karte: helle Creme-Fläche mit Gold-Radials */
+.finalcta__box {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(191, 161, 74, 0.45);
+  background:
+    radial-gradient(680px 420px at 78% 88%, rgba(191, 161, 74, 0.14), transparent 62%),
+    radial-gradient(520px 340px at 6% 10%, rgba(191, 161, 74, 0.08), transparent 60%),
+    linear-gradient(155deg, var(--white) 0%, var(--cream) 45%, var(--cream-warm) 100%);
+  color: var(--text);
+  padding: 48px 56px 0;
+  box-shadow: var(--shadow-card);
+}
+
+/* Feines Karo wie im Hero, Navy auf Creme */
+.finalcta__box::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(249, 226, 181, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(249, 226, 181, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(52, 66, 88, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(52, 66, 88, 0.06) 1px, transparent 1px);
   background-size: 42px 42px;
   -webkit-mask-image: radial-gradient(ellipse 80% 85% at 30% 40%, #000 15%, transparent 75%);
   mask-image: radial-gradient(ellipse 80% 85% at 30% 40%, #000 15%, transparent 75%);
@@ -1843,9 +1853,9 @@ html[data-js] [data-scroll-reveal].is-revealed {
   position: absolute;
   right: -6%;
   bottom: -10%;
-  width: 560px;
-  height: 460px;
-  background: radial-gradient(closest-side, rgba(249, 226, 181, 0.18), transparent 70%);
+  width: 420px;
+  height: 340px;
+  background: radial-gradient(closest-side, rgba(249, 226, 181, 0.5), transparent 70%);
   filter: blur(55px);
   animation: glow-drift 14s ease-in-out infinite alternate;
   pointer-events: none;
@@ -1854,30 +1864,30 @@ html[data-js] [data-scroll-reveal].is-revealed {
 .finalcta__inner {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   align-items: end;
   gap: 24px;
 }
 
 /* Copy-Spalte – unten Luft, weil das Bild bündig abschließt */
 .finalcta__copy {
-  padding: 0 0 92px;
+  padding: 0 0 48px;
 }
 
 /* Das eine große Statement – Serif wie im Beispiel */
 .finalcta__quote {
-  margin: 18px 0 22px;
+  margin: 14px 0 18px;
   font-family: var(--font-serif);
-  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  font-size: clamp(1.4rem, 2.3vw, 1.85rem);
   font-weight: 300;
-  line-height: 1.35;
+  line-height: 1.4;
   letter-spacing: 0.01em;
-  color: var(--cream);
+  color: var(--navy-deep);
   text-wrap: balance;
 }
 
 .finalcta__quote-accent {
-  color: var(--champagne-light);
+  color: var(--gold-deep);
   font-weight: 500;
 }
 
@@ -1885,16 +1895,16 @@ html[data-js] [data-scroll-reveal].is-revealed {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-bottom: 30px;
-  padding-left: 18px;
+  margin-bottom: 22px;
+  padding-left: 16px;
   border-left: 2px solid var(--gold);
 }
 
 .finalcta__person-name {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 500;
-  color: var(--champagne-light);
+  color: var(--navy-deep);
 }
 
 .finalcta__person-role {
@@ -1902,7 +1912,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(249, 226, 181, 0.7);
+  color: var(--text-muted);
 }
 
 /* Verknappung + Countdown */
@@ -1910,8 +1920,8 @@ html[data-js] [data-scroll-reveal].is-revealed {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .finalcta__limit {
@@ -1921,51 +1931,36 @@ html[data-js] [data-scroll-reveal].is-revealed {
   padding: 9px 16px;
   border: 1px solid rgba(191, 161, 74, 0.5);
   border-radius: 999px;
-  background: rgba(191, 161, 74, 0.12);
+  background: rgba(191, 161, 74, 0.1);
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(253, 251, 247, 0.9);
+  color: var(--navy);
 }
 
 .finalcta__limit svg {
-  color: var(--champagne-soft);
+  color: var(--gold-deep);
   flex-shrink: 0;
 }
 
 .finalcta__limit strong {
-  color: var(--champagne-light);
+  color: var(--navy-deep);
   font-weight: 600;
 }
 
-/* Countdown-Kacheln, dunkle Variante */
-.countdown--dark {
+/* Der Countdown in der Box nutzt die helle Standard-Variante;
+   nur der untere Abstand entfällt (kommt vom Urgency-Wrapper) */
+.finalcta__urgency .countdown {
   margin-bottom: 0;
 }
 
-.countdown--dark .countdown__label {
-  color: var(--champagne-soft);
-}
-
-.countdown--dark .countdown__tile {
-  background: rgba(253, 251, 247, 0.07);
-  border-color: rgba(191, 161, 74, 0.4);
-  box-shadow: 0 2px 12px rgba(15, 22, 34, 0.3);
-}
-
-.countdown--dark .countdown__num {
-  color: var(--champagne-light);
-}
-
-.countdown--dark .countdown__unit {
-  color: rgba(253, 251, 247, 0.6);
-}
-
-/* Bild-Spalte: Freisteller schließt bündig mit der Sektionskante ab */
+/* Bild-Spalte: Freisteller schließt bündig mit Box-Unterkante ab und
+   läuft rechts randbündig aus (kaschiert die Knie-Schnittkante) */
 .finalcta__visual {
   position: relative;
   align-self: end;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  margin-right: -56px;
 }
 
 .finalcta__visual::before {
@@ -1974,8 +1969,8 @@ html[data-js] [data-scroll-reveal].is-revealed {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  width: 480px;
-  height: 480px;
+  width: 360px;
+  height: 360px;
   max-width: 90vw;
   border-radius: 50%;
   background: radial-gradient(closest-side, rgba(191, 161, 74, 0.28), transparent 72%);
@@ -1983,11 +1978,12 @@ html[data-js] [data-scroll-reveal].is-revealed {
   pointer-events: none;
 }
 
+/* Breite = native Bildbreite (304px) – nicht hochskalieren, Quellbild ist klein */
 .finalcta__photo {
   position: relative;
-  width: min(460px, 100%);
+  width: min(304px, 100%);
   height: auto;
-  filter: drop-shadow(0 24px 48px rgba(15, 22, 34, 0.55));
+  filter: drop-shadow(0 20px 40px rgba(52, 66, 88, 0.28));
 }
 
 /* ============================================================
@@ -2408,12 +2404,17 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
   /* Finale CTA: einspaltig, Bild unten bündig wie im Desktop */
   .finalcta {
-    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  .finalcta__box {
+    padding: 36px 26px 0;
+    border-radius: 20px;
   }
 
   .finalcta__inner {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 32px;
   }
 
   .finalcta__copy {
@@ -2443,8 +2444,12 @@ html[data-js] [data-scroll-reveal].is-revealed {
     justify-content: center;
   }
 
+  .finalcta__visual {
+    margin-right: -26px;
+  }
+
   .finalcta__photo {
-    width: min(330px, 82%);
+    width: min(260px, 78%);
   }
 }
 
