@@ -1,0 +1,4 @@
+# Fehlerseite (Apache). Der Pfad ist absolut zum DocumentRoot der Subdomain.
+# Bei nginx stattdessen:            error_page 404 /404.html;
+# Netlify / Cloudflare Pages / Vercel / GitHub Pages nehmen /404.html automatisch.
+ErrorDocument 404 /404.html

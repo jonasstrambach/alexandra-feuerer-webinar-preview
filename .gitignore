@@ -1,2 +1,6 @@
 Alexandra Feurer bilder/
 .DS_Store
+
+# ActiveCampaign-Zugangsdaten – nie ins Repository (siehe api/config.sample.php)
+api/config.php
+api/ac-errors.log

@@ -1,0 +1,70 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Alexandra Feuerer//Workshop//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:workshop-2026-09-22@alexandra-feuerer.de
+DTSTAMP:20260817T120000Z
+SEQUENCE:1
+DTSTART;TZID=Europe/Berlin:20260922T200000
+DTEND;TZID=Europe/Berlin:20260922T213000
+SUMMARY:Live-Workshop: Börse & Altersvorsorge – mit Alexandra Feuerer
+DESCRIPTION:Schön\, dass Du dabei bist – Dein Platz ist reserviert.\n\nD
+ EIN ZUGANG ZUM WORKSHOP-RAUM:\nhttps://webinar.alexandra-feuerer.de/webina
+ rraum/\nEinfach kurz vor dem Start anklicken – mehr brauchst Du nicht.\n
+ \nDARUM GEHT ES:\n90 Minuten live und online mit Alexandra Feuerer\, Ex-Ba
+ nkerin mit 25 Jahren Private-Banking-Erfahrung. Du erfährst\, wie Du auch
+  mit Ü40 einfach und planbar an der Börse investierst und fürs Alter vo
+ rsorgst – ohne Vorkenntnisse\, ohne großes Startkapital und ohne Risiko
+ -Spielereien.\n\nDAS NIMMST DU MIT:\n- Ein bewährtes System mit klaren Re
+ geln statt Bauchentscheidungen\n- Einen Weg\, der auch bei einem späten S
+ tart noch zu Dir passt\n- Eine Umsetzung\, die neben Job und Familie funkt
+ ioniert\n- Klarheit darüber\, wo Du heute stehst und was Dein nächster S
+ chritt ist\n\nSO HOLST DU DAS MEISTE HERAUS:\n- Sei 5 Minuten vorher im Ra
+ um\, dann verpasst Du nichts\n- Am besten an Laptop oder Tablet\, mit Ton\
+ n- Stift und Zettel bereitlegen – es gibt viel zum Mitschreiben\n- Nimm 
+ Dir die 90 Minuten bewusst Zeit\, ohne Nebenbei\n\nIch freue mich auf Dich
+ !\nAlexandra\n\nFalls Du die E-Mail mit Deinem persönlichen Zugangslink n
+ icht findest (bitte auch im Spam-Ordner schauen): Über den Link oben komm
+ st Du jederzeit in den Workshop-Raum.
+LOCATION:Online-Workshop-Raum: https://webinar.alexandra-feuerer.de/webinar
+ raum/
+URL:https://webinar.alexandra-feuerer.de/webinarraum/
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-P1D
+DESCRIPTION:Morgen um 20:00 Uhr: Dein Live-Workshop mit Alexandra Feuerer
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT60M
+DESCRIPTION:In 1 Stunde geht es los: Live-Workshop mit Alexandra Feuerer
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT10M
+DESCRIPTION:Gleich startet der Workshop – jetzt in den Raum: https://webi
+ nar.alexandra-feuerer.de/webinarraum/
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/main.css?v=20260819">
 
   <!-- Google Tag Manager: Container-ID eintragen und Kommentar entfernen -->
   <!--
@@ -25,7 +25,7 @@
 
   <header class="topbar">
     <div class="container topbar__inner">
-      <a class="brand" href="https://www.alexandra-feuerer.de" data-track="brand_logo" data-track-position="topbar">
+      <a class="brand" href="/" data-track="brand_logo" data-track-position="topbar">
         <img class="brand__logo" src="../assets/img/logo-blau.svg" alt="Alexandra Feuerer Logo" width="108" height="104">
         <span class="brand__text">
           <span class="brand__name">Alexandra Feuerer</span>
@@ -35,16 +35,663 @@
     </div>
   </header>
 
-  <section class="hero thanks">
-    <div class="container">
-      <div class="thanks__card">
-        <span class="thanks__icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <!-- ================= Hero: Bestätigung + Willkommens-Video =================
+       Personalisierung: [data-name-slot] wird per JS mit dem Vornamen aus der
+       URL (?vorname=) befüllt, [data-name-if] nur dann eingeblendet. -->
+  <section class="hero dhero">
+    <span class="hero__glow" aria-hidden="true"></span>
+    <span class="hero__sparkles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </span>
+
+    <div class="container dhero__inner">
+
+      <div class="dhero__copy">
+        <span class="badge-done" data-reveal="1">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Erfolgreich angemeldet
         </span>
-        <h1>Dein Platz ist reserviert!</h1>
-        <p><strong>Wichtig:</strong> Du bekommst in wenigen Minuten eine E-Mail mit Deinem
-          persönlichen Zugangslink. Schau auch im Spam-Ordner nach.</p>
-        <p>Wir sehen uns am <strong>Dienstag, 22. September um 20:00 Uhr</strong> – live &amp; online.</p>
+
+        <h1 data-reveal="2">
+          <span class="dhero__hello">Glückwunsch<span data-name-if>, <span class="dhero__name" data-name-slot></span></span>!</span>
+          Du hast den <span class="accent">ersten Schritt</span> gemacht
+        </h1>
+
+        <p class="dhero__lead" data-reveal="3">
+          Die meisten schieben ihre Altersvorsorge jahrelang vor sich her. Du hast Dich
+          heute entschieden, Deine Finanzen selbst in die Hand zu nehmen – und genau das
+          ist der Schritt, der den Unterschied macht.
+          <strong>Dein Platz im Workshop ist reserviert.</strong>
+        </p>
+
+        <p class="dhero__note" data-reveal="3">
+          In wenigen Minuten bekommst Du Deinen persönlichen Zugangslink per E-Mail –
+          bitte schau auch kurz im Spam-Ordner nach.
+        </p>
+      </div>
+
+      <!-- Willkommens-Video: Click-to-Play (kein Vimeo-Request vor dem Klick).
+           Steht per Grid-Platzierung auf Desktop rechts neben Text + Termin,
+           auf Mobile direkt unter der Überschrift. -->
+      <div class="dhero__video" data-reveal="4">
+        <p class="dhero__video-label">
+          <span class="dhero__video-dot" aria-hidden="true"></span>
+          Persönliche Nachricht von Alexandra<span data-name-if> für Dich, <span data-name-slot></span></span>
+        </p>
+        <div class="vplayer">
+          <button class="vplayer__media" type="button"
+                  data-video-id="1201347693" data-video-name="danke_welcome" data-video-base="vplayer"
+                  aria-label="Persönliche Videobotschaft von Alexandra Feuerer abspielen">
+            <img class="vplayer__thumb" src="../assets/img/danke-welcome.jpg"
+                 alt="Alexandra Feuerer begrüßt Dich in ihrer persönlichen Videobotschaft"
+                 width="1280" height="720">
+            <span class="vplayer__play" aria-hidden="true">
+              <svg width="26" height="30" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+            </span>
+            <span class="vplayer__duration" aria-hidden="true">2:06</span>
+          </button>
+        </div>
+        <p class="dhero__video-note">Bitte einmal ansehen – darin erkläre ich Dir, wie Du das Meiste aus dem Workshop holst.</p>
+      </div>
+
+      <div class="dhero__meta">
+        <div class="dhero__when" data-reveal="4">
+          <span class="dhero__when-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </span>
+          <span class="dhero__when-text">
+            <strong>Dienstag, 22. September 2026 · 20:00 Uhr</strong>
+            <span>90 Minuten live &amp; online · Aufzeichnung nicht garantiert</span>
+          </span>
+        </div>
+
+        <div class="countdown" data-reveal="5" data-countdown="2026-09-22T20:00:00+02:00" aria-label="Countdown bis zum Workshop-Start">
+          <span class="countdown__label">Noch</span>
+          <span class="countdown__tile"><span class="countdown__num" data-cd="days">–</span><span class="countdown__unit">Tage</span></span>
+          <span class="countdown__tile"><span class="countdown__num" data-cd="hours">–</span><span class="countdown__unit">Std</span></span>
+          <span class="countdown__tile"><span class="countdown__num" data-cd="mins">–</span><span class="countdown__unit">Min</span></span>
+          <span class="countdown__tile"><span class="countdown__num" data-cd="secs">–</span><span class="countdown__unit">Sek</span></span>
+        </div>
+
+        <a class="cta dhero__cta" href="#schritte" data-reveal="6" data-track="cta_steps" data-track-position="hero">
+          <span class="cta__label">
+            Deine nächsten Schritte
+            <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
+          </span>
+          <span class="cta__note">Dauert keine 3 Minuten</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= Trust-Band (belegte Fakten) ================= -->
+  <section class="trustrow">
+    <div class="container trustrow__inner">
+      <img class="trustrow__seal" src="../assets/img/provenexpert.jpeg"
+           alt="ProvenExpert-Siegel: Von Kunden empfohlen 2026" width="72" height="72" loading="lazy">
+      <div class="trustrow__facts">
+        <div class="trustfact">
+          <span class="trustfact__num">4,98<span class="trustfact__sub">/5</span></span>
+          <span class="trustfact__label">auf ProvenExpert</span>
+        </div>
+        <div class="trustfact">
+          <span class="trustfact__num">100&nbsp;%</span>
+          <span class="trustfact__label">Weiterempfehlung</span>
+        </div>
+        <div class="trustfact">
+          <span class="trustfact__num">2.000+</span>
+          <span class="trustfact__label">Kundinnen</span>
+        </div>
+        <div class="trustfact">
+          <span class="trustfact__num">25</span>
+          <span class="trustfact__label">Jahre Private Banking</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Die 3 nächsten Schritte =================
+       Jeder Schritt lässt sich abhaken (localStorage, setupDankeSteps in main.js). -->
+  <section class="steps" id="schritte">
+    <div class="container">
+
+      <div class="steps__head" data-scroll-reveal>
+        <span class="section-kicker">Damit Du das Beste rausholst</span>
+        <h2 class="section-title">
+          Deine nächsten <span class="accent">4 Schritte</span><span data-name-if>, <span data-name-slot></span></span>
+        </h2>
+        <p class="section-sub">
+          Zusammen keine fünf Minuten. Mach sie am besten jetzt sofort,
+          bevor Du den Tab schließt – danach ist alles erledigt.
+        </p>
+      </div>
+
+      <div class="steps__progress" data-scroll-reveal>
+        <div class="steps__bar"><span class="steps__bar-fill" data-steps-fill></span></div>
+        <p class="steps__count"><strong data-steps-count>0</strong> von 4 erledigt</p>
+      </div>
+
+      <ol class="steps__list">
+
+        <li class="step" data-step="kalender" data-scroll-reveal>
+          <span class="step__num" aria-hidden="true">1</span>
+          <span class="step__check" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <div class="step__body">
+            <h3 class="step__title">Trag Dir den Termin in den Kalender ein</h3>
+            <p class="step__text">
+              Mach den 22. September zu Deiner Priorität – mit Erinnerung am Vortag,
+              eine Stunde und 10 Minuten vorher. Im Termin steht auch schon der Link
+              zum Workshop-Raum. Dann verpasst Du ihn garantiert nicht.
+            </p>
+            <p class="step__meta">Di · 20:00 Uhr · 90 Min live</p>
+            <div class="step__actions">
+              <a class="btn-cal" target="_blank" rel="noopener"
+                 data-step-action data-track="calendar_google" data-track-position="steps"
+                 href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Live-Workshop%3A+B%C3%B6rse+%26+Altersvorsorge+%E2%80%93+mit+Alexandra+Feuerer&amp;dates=20260922T180000Z%2F20260922T193000Z&amp;details=Sch%C3%B6n%2C+dass+Du+dabei+bist+%E2%80%93+Dein+Platz+ist+reserviert.%0A%0ADEIN+ZUGANG+ZUM+WORKSHOP-RAUM%3A%0Ahttps%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F%0AEinfach+kurz+vor+dem+Start+anklicken+%E2%80%93+mehr+brauchst+Du+nicht.%0A%0ADARUM+GEHT+ES%3A%0A90+Minuten+live+und+online+mit+Alexandra+Feuerer%2C+Ex-Bankerin+mit+25+Jahren+Private-Banking-Erfahrung.+Du+erf%C3%A4hrst%2C+wie+Du+auch+mit+%C3%9C40+einfach+und+planbar+an+der+B%C3%B6rse+investierst+und+f%C3%BCrs+Alter+vorsorgst+%E2%80%93+ohne+Vorkenntnisse%2C+ohne+gro%C3%9Fes+Startkapital+und+ohne+Risiko-Spielereien.%0A%0ADAS+NIMMST+DU+MIT%3A%0A-+Ein+bew%C3%A4hrtes+System+mit+klaren+Regeln+statt+Bauchentscheidungen%0A-+Einen+Weg%2C+der+auch+bei+einem+sp%C3%A4ten+Start+noch+zu+Dir+passt%0A-+Eine+Umsetzung%2C+die+neben+Job+und+Familie+funktioniert%0A-+Klarheit+dar%C3%BCber%2C+wo+Du+heute+stehst+und+was+Dein+n%C3%A4chster+Schritt+ist%0A%0ASO+HOLST+DU+DAS+MEISTE+HERAUS%3A%0A-+Sei+5+Minuten+vorher+im+Raum%2C+dann+verpasst+Du+nichts%0A-+Am+besten+an+Laptop+oder+Tablet%2C+mit+Ton%0A-+Stift+und+Zettel+bereitlegen+%E2%80%93+es+gibt+viel+zum+Mitschreiben%0A-+Nimm+Dir+die+90+Minuten+bewusst+Zeit%2C+ohne+Nebenbei%0A%0AIch+freue+mich+auf+Dich%21%0AAlexandra%0A%0AFalls+Du+die+E-Mail+mit+Deinem+pers%C3%B6nlichen+Zugangslink+nicht+findest+%28bitte+auch+im+Spam-Ordner+schauen%29%3A+%C3%9Cber+den+Link+oben+kommst+Du+jederzeit+in+den+Workshop-Raum.&amp;location=Online-Workshop-Raum%3A+https%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F&amp;ctz=Europe%2FBerlin">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                Google
+              </a>
+              <a class="btn-cal" href="workshop.ics" download="workshop-alexandra-feuerer.ics"
+                 data-step-action data-track="calendar_apple" data-track-position="steps">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+                Apple / iPhone
+              </a>
+              <a class="btn-cal" target="_blank" rel="noopener"
+                 data-step-action data-track="calendar_outlook" data-track-position="steps"
+                 href="https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&amp;rru=addevent&amp;subject=Live-Workshop%3A+B%C3%B6rse+%26+Altersvorsorge+%E2%80%93+mit+Alexandra+Feuerer&amp;startdt=2026-09-22T18%3A00%3A00Z&amp;enddt=2026-09-22T19%3A30%3A00Z&amp;body=Sch%C3%B6n%2C+dass+Du+dabei+bist+%E2%80%93+Dein+Platz+ist+reserviert.%0A%0ADEIN+ZUGANG+ZUM+WORKSHOP-RAUM%3A%0Ahttps%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F%0AEinfach+kurz+vor+dem+Start+anklicken+%E2%80%93+mehr+brauchst+Du+nicht.%0A%0ADARUM+GEHT+ES%3A%0A90+Minuten+live+und+online+mit+Alexandra+Feuerer%2C+Ex-Bankerin+mit+25+Jahren+Private-Banking-Erfahrung.+Du+erf%C3%A4hrst%2C+wie+Du+auch+mit+%C3%9C40+einfach+und+planbar+an+der+B%C3%B6rse+investierst+und+f%C3%BCrs+Alter+vorsorgst+%E2%80%93+ohne+Vorkenntnisse%2C+ohne+gro%C3%9Fes+Startkapital+und+ohne+Risiko-Spielereien.%0A%0ADAS+NIMMST+DU+MIT%3A%0A-+Ein+bew%C3%A4hrtes+System+mit+klaren+Regeln+statt+Bauchentscheidungen%0A-+Einen+Weg%2C+der+auch+bei+einem+sp%C3%A4ten+Start+noch+zu+Dir+passt%0A-+Eine+Umsetzung%2C+die+neben+Job+und+Familie+funktioniert%0A-+Klarheit+dar%C3%BCber%2C+wo+Du+heute+stehst+und+was+Dein+n%C3%A4chster+Schritt+ist%0A%0ASO+HOLST+DU+DAS+MEISTE+HERAUS%3A%0A-+Sei+5+Minuten+vorher+im+Raum%2C+dann+verpasst+Du+nichts%0A-+Am+besten+an+Laptop+oder+Tablet%2C+mit+Ton%0A-+Stift+und+Zettel+bereitlegen+%E2%80%93+es+gibt+viel+zum+Mitschreiben%0A-+Nimm+Dir+die+90+Minuten+bewusst+Zeit%2C+ohne+Nebenbei%0A%0AIch+freue+mich+auf+Dich%21%0AAlexandra%0A%0AFalls+Du+die+E-Mail+mit+Deinem+pers%C3%B6nlichen+Zugangslink+nicht+findest+%28bitte+auch+im+Spam-Ordner+schauen%29%3A+%C3%9Cber+den+Link+oben+kommst+Du+jederzeit+in+den+Workshop-Raum.&amp;location=Online-Workshop-Raum%3A+https%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                Outlook
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <!-- Kernschritt: die Umfrage. Optisch hervorgehoben (.step--key),
+             weil hier der Lead qualifiziert und der Termin angebahnt wird. -->
+        <li class="step step--key" data-step="umfrage" data-scroll-reveal>
+          <span class="step__num" aria-hidden="true">2</span>
+          <span class="step__check" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <div class="step__body">
+            <span class="step__ribbon">Wichtigster Schritt</span>
+            <h3 class="step__title">Beantworte mir 6 kurze Fragen</h3>
+            <p class="step__text">
+              Ich bereite den Workshop für <em>Dich</em> vor – nicht für irgendeine
+              anonyme Zielgruppe. Sag mir, wo Du gerade stehst und was Dich zurückhält,
+              dann gehe ich im Workshop genau darauf ein.
+            </p>
+            <p class="step__gift">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M12 8S9.5 3 7 3a2.5 2.5 0 0 0 0 5M12 8s2.5-5 5-5a2.5 2.5 0 0 1 0 5"/></svg>
+              Als Dankeschön schenke ich Dir Deinen persönlichen
+              <strong>Finanz-Fahrplan im Wert von 500&nbsp;€</strong>
+            </p>
+            <p class="step__meta">6 Fragen · ca. 2 Minuten</p>
+            <div class="step__actions">
+              <a class="cta step__cta" href="umfrage/" data-carry-name
+                 data-step-action data-track="survey_start" data-track-position="steps">
+                <span class="cta__label">
+                  Fragen beantworten &amp; Geschenk sichern
+                  <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
+                </span>
+                <span class="cta__note">Kostenfrei · nur für Workshop-Teilnehmerinnen</span>
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <li class="step step--wa" data-step="whatsapp" data-scroll-reveal>
+          <span class="step__num" aria-hidden="true">3</span>
+          <span class="step__check" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <div class="step__body">
+            <h3 class="step__title">Komm in meine WhatsApp-Community</h3>
+            <p class="step__text">
+              Dort bekommst Du Deine Erinnerung kurz vor dem Start, regelmäßige Impulse
+              und den direkten Draht zu mir. Vor dem Workshop melde ich mich persönlich bei Dir.
+            </p>
+            <p class="step__meta">Über 2.000 Frauen sind schon dabei</p>
+            <div class="step__actions">
+              <a class="btn-wa" target="_blank" rel="noopener"
+                 data-step-action data-track="whatsapp_join" data-track-position="steps"
+                 data-wa-sign="Viele Grüße,"
+                 href="https://api.whatsapp.com/send/?phone=%2B4915560647029&amp;text=Hallo+Alexandra%21+Ich+m%C3%B6chte+in+deine+WhatsApp-Community+und+meine+Workshop-Erinnerungen+erhalten.&amp;type=phone_number&amp;app_absent=0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm5.424-7.403c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.884-.788-1.48-1.761-1.654-2.059-.173-.297-.019-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.199.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.073.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                Community beitreten
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <li class="step" data-step="videos" data-scroll-reveal>
+          <span class="step__num" aria-hidden="true">4</span>
+          <span class="step__check" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <div class="step__body">
+            <h3 class="step__title">Wenn Du noch Fragen hast: 5 kurze Antwort-Videos</h3>
+            <p class="step__text">
+              „Bin ich zu alt?", „Ist das seriös?", „Ich habe Angst vor der Technik" –
+              die häufigsten Fragen habe ich Dir persönlich beantwortet.
+              Kein Muss, aber es nimmt die letzten Zweifel.
+            </p>
+            <p class="step__meta">5 Videos · je 1–2 Minuten</p>
+            <div class="step__actions">
+              <a class="btn-cal" href="#antworten"
+                 data-step-action data-track="goto_answers" data-track-position="steps">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                Videos ansehen
+              </a>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= Antwort-Videos (Einwände vorwegnehmen) ================= -->
+  <section class="answers" id="antworten">
+    <div class="container">
+
+      <div class="answers__head" data-scroll-reveal>
+        <span class="section-kicker section-kicker--gold">Deine Fragen – meine Antworten</span>
+        <h2 class="section-title section-title--light">
+          Damit Du <span class="accent">ohne Zweifel</span> dabei bist
+        </h2>
+        <p class="answers__sub">
+          Diese fünf Fragen höre ich am häufigsten. Klick rein – jede Antwort dauert
+          nur ein bis zwei Minuten.
+        </p>
+      </div>
+
+      <div class="answers__grid">
+
+        <article class="answer" data-scroll-reveal>
+          <div class="vplayer vplayer--portrait">
+            <button class="vplayer__media" type="button"
+                    data-video-id="1168415011" data-video-name="antwort_zu_alt" data-video-base="vplayer"
+                    data-step-action data-step-target="videos"
+                    aria-label="Video abspielen: Bin ich zu alt dafür?">
+              <img class="vplayer__thumb" src="../assets/img/answer-alt.jpg"
+                   alt="Alexandra Feuerer beantwortet die Frage: Bin ich zu alt dafür?"
+                   width="720" height="720" loading="lazy">
+              <span class="vplayer__play" aria-hidden="true">
+                <svg width="20" height="24" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+              </span>
+              <span class="vplayer__duration" aria-hidden="true">1:09</span>
+            </button>
+          </div>
+          <h3 class="answer__q">„Bin ich zu alt dafür?"</h3>
+        </article>
+
+        <article class="answer" data-scroll-reveal>
+          <div class="vplayer vplayer--portrait">
+            <button class="vplayer__media" type="button"
+                    data-video-id="1168414050" data-video-name="antwort_serioes" data-video-base="vplayer"
+                    data-step-action data-step-target="videos"
+                    aria-label="Video abspielen: Ist das seriös oder Zockerei?">
+              <img class="vplayer__thumb" src="../assets/img/answer-serioes.jpg"
+                   alt="Alexandra Feuerer beantwortet die Frage: Ist das seriös oder Zockerei?"
+                   width="720" height="720" loading="lazy">
+              <span class="vplayer__play" aria-hidden="true">
+                <svg width="20" height="24" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+              </span>
+              <span class="vplayer__duration" aria-hidden="true">2:19</span>
+            </button>
+          </div>
+          <h3 class="answer__q">„Ist das seriös oder Zockerei?"</h3>
+        </article>
+
+        <article class="answer" data-scroll-reveal>
+          <div class="vplayer vplayer--portrait">
+            <button class="vplayer__media" type="button"
+                    data-video-id="1168414626" data-video-name="antwort_technik" data-video-base="vplayer"
+                    data-step-action data-step-target="videos"
+                    aria-label="Video abspielen: Ich habe Angst vor der Technik">
+              <img class="vplayer__thumb" src="../assets/img/answer-technik.jpg"
+                   alt="Alexandra Feuerer beantwortet die Frage: Ich habe Angst vor der Technik"
+                   width="720" height="720" loading="lazy">
+              <span class="vplayer__play" aria-hidden="true">
+                <svg width="20" height="24" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+              </span>
+              <span class="vplayer__duration" aria-hidden="true">1:34</span>
+            </button>
+          </div>
+          <h3 class="answer__q">„Ich habe Angst vor der Technik"</h3>
+        </article>
+
+        <article class="answer" data-scroll-reveal>
+          <div class="vplayer vplayer--portrait">
+            <button class="vplayer__media" type="button"
+                    data-video-id="1168414358" data-video-name="antwort_verkauf" data-video-base="vplayer"
+                    data-step-action data-step-target="videos"
+                    aria-label="Video abspielen: Wird mir hier nur was verkauft?">
+              <img class="vplayer__thumb" src="../assets/img/answer-verkauf.jpg"
+                   alt="Alexandra Feuerer beantwortet die Frage: Wird mir hier nur was verkauft?"
+                   width="720" height="720" loading="lazy">
+              <span class="vplayer__play" aria-hidden="true">
+                <svg width="20" height="24" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+              </span>
+              <span class="vplayer__duration" aria-hidden="true">2:17</span>
+            </button>
+          </div>
+          <h3 class="answer__q">„Wird mir hier nur was verkauft?"</h3>
+        </article>
+
+        <article class="answer" data-scroll-reveal>
+          <div class="vplayer vplayer--portrait">
+            <button class="vplayer__media" type="button"
+                    data-video-id="1168414816" data-video-name="antwort_millionen" data-video-base="vplayer"
+                    data-step-action data-step-target="videos"
+                    aria-label="Video abspielen: Brauche ich Millionen dafür?">
+              <img class="vplayer__thumb" src="../assets/img/answer-millionen.jpg"
+                   alt="Alexandra Feuerer beantwortet die Frage: Brauche ich Millionen dafür?"
+                   width="720" height="720" loading="lazy">
+              <span class="vplayer__play" aria-hidden="true">
+                <svg width="20" height="24" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+              </span>
+              <span class="vplayer__duration" aria-hidden="true">1:24</span>
+            </button>
+          </div>
+          <h3 class="answer__q">„Brauche ich Millionen dafür?"</h3>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Video-Testimonials ================= -->
+  <section class="stories" id="stimmen">
+    <div class="container">
+
+      <div class="stories__head" data-scroll-reveal>
+        <span class="section-kicker">Erfahrungen aus erster Hand</span>
+        <h2 class="section-title">Frauen, die diesen Weg <span class="accent">schon gegangen sind</span></h2>
+        <p class="section-sub">
+          Sie haben genau da gestanden, wo Du jetzt stehst. Hör kurz rein –
+          dann weißt Du, worauf Du Dich am 22. September freuen kannst.
+        </p>
+      </div>
+
+      <div class="stories__grid">
+
+        <article class="story" data-scroll-reveal>
+          <button class="story__media" type="button"
+                  data-video-id="1125087581" data-video-name="lotta"
+                  aria-label="Videotestimonial von Lotta abspielen">
+            <img class="story__thumb" src="../assets/img/testimonial-lotta.jpg"
+                 alt="Lotta, Diplom-Psychologin, erzählt in ihrem Video von ihrer Erfahrung"
+                 width="1280" height="720" loading="lazy">
+            <span class="story__play" aria-hidden="true">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+            </span>
+            <span class="story__duration" aria-hidden="true">12:08</span>
+          </button>
+          <div class="story__body">
+            <p class="story__quote">
+              „Seit dem Coaching schaue ich abends keine Serien mehr – es ist spannender
+              als Netflix. Ich tauche ins Lernmaterial ein, bin mega angefixt und stolz,
+              dass ich meinem Impuls gefolgt bin."
+            </p>
+            <footer class="story__person">
+              <span class="story__name">Lotta</span>
+              <span class="story__role">Diplom-Psychologin</span>
+            </footer>
+          </div>
+        </article>
+
+        <article class="story" data-scroll-reveal>
+          <button class="story__media" type="button"
+                  data-video-id="1125111669" data-video-name="ina"
+                  aria-label="Videotestimonial von Ina abspielen">
+            <img class="story__thumb" src="../assets/img/testimonial-ina.jpg"
+                 alt="Ina, Führungskraft, erzählt in ihrem Video von ihrer Erfahrung"
+                 width="1280" height="720" loading="lazy">
+            <span class="story__play" aria-hidden="true">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+            </span>
+            <span class="story__duration" aria-hidden="true">2:32</span>
+          </button>
+          <div class="story__body">
+            <p class="story__quote">
+              „Bei Alexandra geht es nicht nur ums Wissen. Sie gibt mir die Kraft,
+              selbstbestimmt Entscheidungen zu treffen und jeden Meilenstein zu feiern."
+            </p>
+            <footer class="story__person">
+              <span class="story__name">Ina</span>
+              <span class="story__role">Führungskraft</span>
+            </footer>
+          </div>
+        </article>
+
+        <article class="story" data-scroll-reveal>
+          <button class="story__media" type="button"
+                  data-video-id="1125111852" data-video-name="martina"
+                  aria-label="Videotestimonial von Martina abspielen">
+            <img class="story__thumb" src="../assets/img/testimonial-martina.jpg"
+                 alt="Martina, Life-Coach und Energieheilerin, erzählt in ihrem Video von ihrer Erfahrung"
+                 width="1280" height="720" loading="lazy">
+            <span class="story__play" aria-hidden="true">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+            </span>
+            <span class="story__duration" aria-hidden="true">2:55</span>
+          </button>
+          <div class="story__body">
+            <p class="story__quote">
+              „Ich habe Alexandra mein vollstes Vertrauen geschenkt – und wurde
+              tief berührt und gestärkt."
+            </p>
+            <footer class="story__person">
+              <span class="story__name">Martina</span>
+              <span class="story__role">Life-Coach &amp; Energieheilerin</span>
+            </footer>
+          </div>
+        </article>
+
+        <article class="story" data-scroll-reveal>
+          <button class="story__media" type="button"
+                  data-video-id="1133234729" data-video-name="ruth"
+                  aria-label="Videotestimonial von Ruth abspielen">
+            <img class="story__thumb" src="../assets/img/testimonial-ruth.jpg"
+                 alt="Ruth, Apothekerin, erzählt in ihrem Video von ihrer Erfahrung"
+                 width="1280" height="720" loading="lazy">
+            <span class="story__play" aria-hidden="true">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor"><path d="M20.6 11.3 3.1.4A2 2 0 0 0 0 2.1v21.8a2 2 0 0 0 3.1 1.7l17.5-10.9a2 2 0 0 0 0-3.4z"/></svg>
+            </span>
+            <span class="story__duration" aria-hidden="true">4:18</span>
+          </button>
+          <div class="story__body">
+            <p class="story__quote">
+              „Ich habe durch das Coaching nicht nur beim Investieren, sondern als Mensch
+              enorm gewonnen. Es ist viel einfacher, als man denkt –
+              man muss nur die Schritte umsetzen."
+            </p>
+            <footer class="story__person">
+              <span class="story__name">Ruth</span>
+              <span class="story__role">Apothekerin</span>
+            </footer>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Kurz-Bewertungen (kompaktes Trust-Band) ================= -->
+  <section class="reviews" id="bewertungen">
+    <div class="container">
+
+      <div class="reviews__head" data-scroll-reveal>
+        <span class="section-kicker section-kicker--gold">Das sagen Teilnehmerinnen</span>
+        <h2 class="reviews__title">Vertrauen, das sich <span class="reviews__accent">herumspricht</span></h2>
+      </div>
+
+      <div class="reviews__slider">
+        <div class="reviews__grid">
+
+          <article class="review" data-scroll-reveal>
+            <div class="review__top">
+              <img class="review__avatar" src="../assets/img/review-theresa.jpg" alt="" width="46" height="46" loading="lazy">
+              <div class="review__person">
+                <span class="review__name">Theresa</span>
+                <span class="review__role">Expertin für Frauengesundheit &amp; Mama</span>
+              </div>
+            </div>
+            <span class="review__stars" role="img" aria-label="Bewertung: 5 von 5 Sternen">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+            </span>
+            <p class="review__quote">
+              „Noch nie habe ich jemanden so begeistert und liebevoll über Finanzen sprechen hören."
+            </p>
+          </article>
+
+          <article class="review" data-scroll-reveal>
+            <div class="review__top">
+              <img class="review__avatar" src="../assets/img/review-lotta.jpg" alt="" width="46" height="46" loading="lazy">
+              <div class="review__person">
+                <span class="review__name">Lotta</span>
+                <span class="review__role">Diplom-Psychologin</span>
+              </div>
+            </div>
+            <span class="review__stars" role="img" aria-label="Bewertung: 5 von 5 Sternen">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+            </span>
+            <p class="review__quote">
+              „Spannender als Netflix. Mein neues Abendprogramm ist das Lernen über Finanzen."
+            </p>
+          </article>
+
+          <article class="review" data-scroll-reveal>
+            <div class="review__top">
+              <img class="review__avatar" src="../assets/img/review-gabriele.jpg" alt="" width="46" height="46" loading="lazy">
+              <div class="review__person">
+                <span class="review__name">Gabriele</span>
+                <span class="review__role">Rentnerin &amp; Energiemaklerin</span>
+              </div>
+            </div>
+            <span class="review__stars" role="img" aria-label="Bewertung: 5 von 5 Sternen">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+            </span>
+            <p class="review__quote">
+              „Ich habe den Vergleich. Das Coaching bei Alexandra ist um Längen besser
+              als die anderen Angebote am Markt."
+            </p>
+          </article>
+
+          <article class="review" data-scroll-reveal>
+            <div class="review__top">
+              <img class="review__avatar" src="../assets/img/review-martina.jpg" alt="" width="46" height="46" loading="lazy">
+              <div class="review__person">
+                <span class="review__name">Martina</span>
+                <span class="review__role">Life-Coach &amp; Energieheilerin</span>
+              </div>
+            </div>
+            <span class="review__stars" role="img" aria-label="Bewertung: 5 von 5 Sternen">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+            </span>
+            <p class="review__quote">
+              „Ich habe Alexandra mein vollstes Vertrauen geschenkt und wurde
+              tief berührt und gestärkt."
+            </p>
+          </article>
+
+          <article class="review" data-scroll-reveal>
+            <div class="review__top">
+              <img class="review__avatar" src="../assets/img/review-heidi.jpg" alt="" width="46" height="46" loading="lazy">
+              <div class="review__person">
+                <span class="review__name">Heidi</span>
+                <span class="review__role">4-fach Mama</span>
+              </div>
+            </div>
+            <span class="review__stars" role="img" aria-label="Bewertung: 5 von 5 Sternen">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+            </span>
+            <p class="review__quote">
+              „Ich dachte, ich weiß viel. Aber dieses Programm hat meine Sicht
+              auf Geld komplett verändert."
+            </p>
+          </article>
+
+        </div>
+
+        <div class="reviews__controls">
+          <button class="reviews__arrow" type="button" data-slider-prev aria-label="Vorherige Bewertungen">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="reviews__dots"></div>
+          <button class="reviews__arrow" type="button" data-slider-next aria-label="Weitere Bewertungen">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= Abschluss: WhatsApp-Community ================= -->
+  <section class="wacta" id="community">
+    <div class="container">
+      <div class="wacta__box" data-scroll-reveal>
+
+        <div class="wacta__body">
+          <span class="wacta__chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
+            Über 2.000 Frauen sind schon dabei
+          </span>
+
+          <p class="wacta__quote">
+            „Du musst diesen Weg nicht alleine gehen – und Du sollst ihn auch nicht
+            alleine gehen müssen."
+          </p>
+
+          <p class="wacta__text">
+            In meiner WhatsApp-Community bekommst Du Deine Workshop-Erinnerung,
+            regelmäßige Impulse und den direkten Draht zu mir. Ein Klick, jederzeit kündbar.
+          </p>
+
+          <a class="btn-wa btn-wa--lg" target="_blank" rel="noopener"
+             data-step-action data-step-target="whatsapp"
+             data-track="whatsapp_join" data-track-position="final"
+             data-wa-sign="Viele Grüße,"
+             href="https://api.whatsapp.com/send/?phone=%2B4915560647029&amp;text=Hallo+Alexandra%21+Ich+m%C3%B6chte+in+deine+WhatsApp-Community+und+meine+Workshop-Erinnerungen+erhalten.&amp;type=phone_number&amp;app_absent=0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm5.424-7.403c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.884-.788-1.48-1.761-1.654-2.059-.173-.297-.019-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.199.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.073.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+            Jetzt der Community beitreten
+          </a>
+
+          <p class="wacta__signoff">
+            Ich freue mich auf Dich<span data-name-if>, <span data-name-slot></span></span> –
+            wir sehen uns am 22. September. <span class="wacta__sign">Deine Alexandra</span>
+          </p>
+        </div>
+
+        <img class="wacta__img" src="../assets/img/alexandra-cutout.png"
+             alt="Alexandra Feuerer" width="304" height="456" loading="lazy">
+
       </div>
     </div>
   </section>
@@ -68,6 +715,6 @@
     </div>
   </footer>
 
-  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/main.js?v=20260819"></script>
 </body>
 </html>
