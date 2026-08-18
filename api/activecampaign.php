@@ -49,7 +49,7 @@ if ($origin !== '' && !empty($allowed)) {
   header('Vary: Origin');
 }
 
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Max-Age: 86400');
 
@@ -57,20 +57,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
   http_response_code(204);
   exit;
 }
-/* ---------- Freie Plaetze (GET ?action=seats) ----------
-   Liefert den echten Anmeldestand fuer die Verknappungs-Anzeige.
-   Bewusst ein sehr schmaler Zweig: kein Body, keine Personendaten,
-   nur Limit und Rest. Eigener Rate-Limit-Topf, damit die Anzeige
-   niemals das Kontingent einer echten Anmeldung aufbraucht. */
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET'
-    && (isset($_GET['action']) ? $_GET['action'] : '') === 'seats') {
-  $seatsRl = isset($config['seats_rate_limit']) ? (int) $config['seats_rate_limit'] : 120;
-  if ($seatsRl > 0 && !rateLimitOk($seatsRl, 'seats')) {
-    respond(429, array('ok' => false, 'error' => 'rate_limited'));
-  }
-  respondSeats($config);
-}
-
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
   respond(405, array('ok' => false, 'error' => 'method_not_allowed'));
 }
@@ -401,72 +387,6 @@ function isDuplicateError(array $data): bool {
 
 
 /* ============================================================
-   Freie Plaetze
-   ------------------------------------------------------------
-   Es wird ausschliesslich gezaehlt, was wirklich in AC steht.
-   Keine Schaetzung, keine Zufallszahl: Die Anzeige darf nur
-   behaupten, was sich belegen laesst.
-   ============================================================ */
-
-function respondSeats(array $config): void {
-  $limit = isset($config['seats_limit']) ? (int) $config['seats_limit'] : 0;
-  if ($limit <= 0) {
-    /* Nicht konfiguriert = Anzeige bleibt statisch. Kein Fehler. */
-    respond(200, array('ok' => false, 'error' => 'seats_disabled'));
-  }
-
-  /* Der Stand steht auf jeder Seite – ohne Zwischenspeicher wuerde
-     jeder Seitenaufruf ActiveCampaign abfragen. */
-  $ttl    = isset($config['seats_cache_ttl']) ? (int) $config['seats_cache_ttl'] : 300;
-  $cached = cacheGet('seats_taken', $ttl);
-
-  if ($cached === null) {
-    try {
-      $taken = acCountRegistrations($config);
-    } catch (Throwable $e) {
-      logError($config, 'seats – ' . $e->getMessage());
-      respond(502, array('ok' => false, 'error' => 'upstream_failed'));
-    }
-    cacheSet('seats_taken', $taken);
-  } else {
-    $taken = (int) $cached;
-  }
-
-  /* 'taken' wird bewusst NICHT ausgeliefert: Wie viele sich bereits
-     angemeldet haben, geht die Oeffentlichkeit nichts an. */
-  respond(200, array(
-    'ok'        => true,
-    'limit'     => $limit,
-    'remaining' => max(0, $limit - $taken),
-  ));
-}
-
-/**
- * Zaehlt die Anmeldungen. Bevorzugt ueber den Termin-Tag, damit ein
- * neuer Workshop wieder bei null anfaengt; ohne Tag ueber die Liste.
- */
-function acCountRegistrations(array $config): int {
-  $tagName = isset($config['seats_tag']) ? trim((string) $config['seats_tag']) : '';
-
-  if ($tagName !== '') {
-    $tagId = resolveTagId($config, $tagName);
-    /* Tag noch nicht vorhanden = es hat sich noch niemand angemeldet. */
-    if ($tagId === null) return 0;
-    $res = acRequest($config, 'GET', '/api/3/contacts?limit=1&tagid=' . rawurlencode($tagId));
-    return (int) ($res['meta']['total'] ?? 0);
-  }
-
-  if (!empty($config['list_id'])) {
-    $res = acRequest($config, 'GET',
-      '/api/3/contacts?limit=1&status=1&listid=' . (int) $config['list_id']);
-    return (int) ($res['meta']['total'] ?? 0);
-  }
-
-  throw new RuntimeException('weder seats_tag noch list_id konfiguriert');
-}
-
-
-/* ============================================================
    Kleinkram
    ============================================================ */
 
@@ -519,11 +439,11 @@ function slugify(string $value): string {
 }
 
 /** Einfache Wiedervorlage-Bremse pro IP und Stunde. */
-function rateLimitOk(int $limit, string $bucket = 'form'): bool {
+function rateLimitOk(int $limit): bool {
   $dir = cacheDir();
   if ($dir === null) return true;
   $ip   = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-  $file = $dir . '/rl_' . md5($bucket . '|' . $ip . date('YmdH')) . '.txt';
+  $file = $dir . '/rl_' . md5($ip . date('YmdH')) . '.txt';
   $count = is_readable($file) ? (int) file_get_contents($file) : 0;
   if ($count >= $limit) return false;
   @file_put_contents($file, (string) ($count + 1), LOCK_EX);
@@ -536,11 +456,11 @@ function cacheDir(): ?string {
   return is_writable($dir) ? $dir : null;
 }
 
-function cacheGet(string $key, int $ttl = AC_CACHE_TTL) {
+function cacheGet(string $key) {
   $dir = cacheDir();
   if ($dir === null) return null;
   $file = $dir . '/' . preg_replace('/[^a-z0-9_]/i', '', $key) . '.json';
-  if (!is_readable($file) || (time() - (int) filemtime($file)) > $ttl) return null;
+  if (!is_readable($file) || (time() - (int) filemtime($file)) > AC_CACHE_TTL) return null;
   $data = json_decode((string) file_get_contents($file), true);
   return isset($data['v']) ? $data['v'] : null;
 }

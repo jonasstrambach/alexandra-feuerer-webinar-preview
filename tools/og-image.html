@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de" data-card="workshop">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>Share-Bild-Generator (1200 × 630)</title>
+<!--
+  Quelle für die Social-Media-Share-Bilder (Open Graph / Twitter Cards).
+  Wird NICHT ausgeliefert (siehe .gitlab-ci.yml – nur index.html, 404.html,
+  assets/, danke/, termin/ wandern nach public/).
+
+  Rendern (aus dem Projekt-Root):
+    ./tools/render-og.sh
+  Das Skript schiesst beide Karten mit Headless Chrome und schreibt
+  assets/img/og-share.jpg + assets/img/og-termin.jpg.
+
+  Welche Karte gezeigt wird, steuert der Hash:
+    tools/og-image.html#workshop   → Optin-/Workshop-Karte  (og-share.jpg)
+    tools/og-image.html#termin     → Terminbuchungs-Karte   (og-termin.jpg)
+
+  ACHTUNG: Die Workshop-Karte nennt den Workshop-Termin. Bei einer
+  Terminänderung hier den Text anpassen UND neu rendern – sonst zeigt die
+  Linkvorschau weiter das alte Datum.
+-->
+<style>
+  @font-face{font-family:"La Luxes Serif Pro";src:url("../assets/fonts/LaLuxesSerifPro-Light.otf") format("opentype");font-weight:300}
+  @font-face{font-family:"La Luxes Serif Pro";src:url("../assets/fonts/LaLuxesSerifPro-Regular.otf") format("opentype");font-weight:400}
+  @font-face{font-family:"La Luxes Serif Pro";src:url("../assets/fonts/LaLuxesSerifPro-Medium.otf") format("opentype");font-weight:500}
+  @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap");
+
+  /* Tokens 1:1 aus assets/css/main.css – hier dupliziert, damit die Datei
+     ohne das Seiten-Stylesheet rendert. */
+  :root{
+    --navy:#344258; --navy-deep:#273349; --gold:#bfa14a; --gold-deep:#a3873a;
+    --champagne:#cdba99; --champagne-light:#f9e2b5; --cream:#fdfbf7;
+    --font-sans:"Montserrat",system-ui,sans-serif;
+    --font-serif:"La Luxes Serif Pro",Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{width:1200px;height:630px;overflow:hidden;font-family:var(--font-sans);color:var(--navy)}
+
+  /* Hintergrund = derselbe Aufbau wie .hero: Gold-Radials + Karo + Glow */
+  .og{position:relative;width:1200px;height:630px;overflow:hidden;
+      background:
+        radial-gradient(900px 560px at 78% 12%, rgba(249,226,181,.62), transparent 66%),
+        radial-gradient(700px 460px at -5% 100%, rgba(205,186,153,.30), transparent 62%),
+        var(--cream);}
+  .og__grid{position:absolute;inset:0;
+    background-image:
+      linear-gradient(to right, rgba(52,66,88,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(52,66,88,.06) 1px, transparent 1px);
+    background-size:42px 42px;
+    -webkit-mask-image:radial-gradient(ellipse 95% 100% at 40% 0%, #000 25%, transparent 78%);}
+  .og__glow{position:absolute;top:-4%;right:-6%;width:620px;height:520px;
+    background:radial-gradient(closest-side, rgba(249,226,181,.75), transparent 70%);filter:blur(46px)}
+  .og__rule{position:absolute;left:0;top:0;width:100%;height:8px;
+    background:linear-gradient(90deg,#d9bd7a 0%,#bfa14a 45%,#a3873a 100%)}
+
+  .og__inner{position:relative;height:100%;padding:52px 56px 46px;display:flex}
+  .copy{width:672px;display:flex;flex-direction:column;height:100%}
+
+  .badge{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;
+    padding:8px 16px;border-radius:999px;background:#fff;
+    border:1px solid rgba(191,161,74,.42);box-shadow:0 6px 20px rgba(52,66,88,.08);
+    font-size:15px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)}
+  .badge__dot{width:9px;height:9px;border-radius:50%;background:#e2544a;
+    box-shadow:0 0 0 4px rgba(226,84,74,.18)}
+
+  h1{font-family:var(--font-serif);font-weight:400;font-size:58px;line-height:1.1;
+     margin-top:26px;letter-spacing:.004em}
+  h1 .accent{color:var(--gold-deep)}
+  .sub{margin-top:20px;font-size:21px;line-height:1.45;color:#4c5a6e;max-width:610px}
+  .sub strong{font-weight:600;color:var(--navy)}
+
+  .meta{margin-top:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+    background:rgba(255,255,255,.9);border:1px solid rgba(52,66,88,.12);
+    font-size:16px;font-weight:600;color:var(--navy)}
+  .chip svg{color:var(--gold-deep)}
+  .chip--gold{background:linear-gradient(135deg,#d9bd7a 0%,#bfa14a 100%);border-color:transparent;color:#fff}
+  .chip--gold svg{color:#fff}
+
+  .foot{margin-top:24px;display:flex;align-items:center;gap:16px}
+  .foot__logo{width:46px;height:44px}
+  .foot__name{font-family:var(--font-serif);font-size:23px;font-weight:500;line-height:1.15}
+  .foot__url{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#7d8899;font-weight:500}
+  .foot__sep{width:1px;height:40px;background:rgba(52,66,88,.14)}
+  .foot__pe{width:58px;height:58px;border-radius:50%;object-fit:cover;
+    border:2px solid rgba(191,161,74,.35)}
+  .foot__petext{font-size:13px;line-height:1.35;color:#7d8899;font-weight:500}
+  .foot__petext b{display:block;color:var(--navy);font-weight:600;font-size:14px}
+
+  /* Visual rechts: Champagner-Halo + Gold-Chart + Freisteller.
+     Das Bild ist oben ausgerichtet, damit der Kopf komplett im Bild bleibt;
+     unten läuft es bewusst aus dem Rahmen. */
+  .visual{position:absolute;right:0;top:0;width:560px;height:630px}
+  .visual__halo{position:absolute;right:-40px;top:36px;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(205,186,153,.34), rgba(205,186,153,.10) 62%, transparent 72%)}
+  .visual__chart{position:absolute;left:62px;top:30px;width:392px;color:rgba(191,161,74,.34)}
+  .visual__photo{position:absolute;right:-12px;top:16px;width:412px;
+    filter:drop-shadow(0 26px 46px rgba(52,66,88,.18))}
+
+  /* Karten-Umschaltung über den Hash (siehe Script unten) */
+  [data-card="workshop"] .card--termin,
+  [data-card="termin"]   .card--workshop{display:none}
+</style>
+</head>
+<body>
+<div class="og">
+  <div class="og__grid"></div>
+  <div class="og__glow"></div>
+  <div class="og__rule"></div>
+
+  <div class="visual">
+    <div class="visual__halo"></div>
+    <svg class="visual__chart" viewBox="0 0 460 340" fill="none" aria-hidden="true">
+      <g fill="currentColor">
+        <rect x="18" y="240" width="22" height="70" rx="4"/>
+        <rect x="78" y="205" width="22" height="82" rx="4" opacity="0.55"/>
+        <rect x="138" y="222" width="22" height="72" rx="4"/>
+        <rect x="300" y="130" width="22" height="95" rx="4" opacity="0.55"/>
+        <rect x="418" y="42" width="22" height="108" rx="4"/>
+      </g>
+      <path d="M10 272 L89 218 L149 240 L311 148 L360 168 L436 62" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M436 62 l-30 2 m30 -2 l-8 29" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+    <img class="visual__photo" src="../assets/img/alexandra-final-cutout.webp" alt="">
+  </div>
+
+  <div class="og__inner">
+    <div class="copy">
+
+      <!-- ============ Karte 1: Workshop / Optin ============ -->
+      <span class="badge card--workshop"><span class="badge__dot"></span>Kostenfreier Live-Workshop</span>
+
+      <h1 class="card--workshop">Einfach und <span class="accent">planbar</span> an der Börse investieren.</h1>
+
+      <p class="sub card--workshop">Ex-Bankerin <strong>Alexandra Feuerer</strong> zeigt Dir, wie Du auch mit Ü40 fürs Alter vorsorgst – ohne Vorkenntnisse und großes Startkapital.</p>
+
+      <div class="meta card--workshop">
+        <span class="chip">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Di, 22. September
+        </span>
+        <span class="chip">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          20:00 Uhr, live &amp; online
+        </span>
+        <span class="chip chip--gold">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          100&nbsp;% kostenlos
+        </span>
+      </div>
+
+      <!-- ============ Karte 2: Terminbuchung ============ -->
+      <span class="badge card--termin"><span class="badge__dot"></span>Begrenzte Termine</span>
+
+      <h1 class="card--termin">Dein <span class="accent">persönlicher</span> Termin mit Alexandra.</h1>
+
+      <p class="sub card--termin">30 Minuten mit <strong>Ex-Bankerin Alexandra Feuerer</strong>: Wo Du heute stehst und was Dein nächster konkreter Schritt ist. Persönlich – nicht mit einem Vertriebsteam.</p>
+
+      <div class="meta card--termin">
+        <span class="chip">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          30 Minuten, online
+        </span>
+        <span class="chip">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Persönlich mit Alexandra
+        </span>
+        <span class="chip chip--gold">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          100&nbsp;% kostenfrei
+        </span>
+      </div>
+
+      <!-- ============ Signatur (auf beiden Karten) ============ -->
+      <div class="foot">
+        <img class="foot__logo" src="../assets/img/logo-blau.svg" alt="">
+        <span>
+          <span class="foot__name">Alexandra Feuerer</span><br>
+          <span class="foot__url">25 Jahre Private Banking</span>
+        </span>
+        <span class="foot__sep"></span>
+        <img class="foot__pe" src="../assets/img/provenexpert.jpeg" alt="">
+        <span class="foot__petext"><b>Von Kunden empfohlen</b>ProvenExpert 2026</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // #termin blendet die Terminkarte ein, alles andere zeigt die Workshop-Karte.
+  var card = (location.hash || "#workshop").slice(1);
+  document.documentElement.dataset.card = card === "termin" ? "termin" : "workshop";
+</script>
+</body>
+</html>

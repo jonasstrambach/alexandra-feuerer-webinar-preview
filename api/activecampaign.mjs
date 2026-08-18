@@ -46,7 +46,6 @@ export default async function handler(request) {
 /* Cloudflare Pages Functions */
 export const onRequestPost = (context) => handleRequest(context.request, context.env);
 export const onRequestOptions = (context) => handleRequest(context.request, context.env);
-export const onRequestGet = (context) => handleRequest(context.request, context.env);
 
 /* ============================================================
    Ablauf
@@ -68,20 +67,12 @@ async function handleRequest(request, env) {
       status: 204,
       headers: {
         ...cors,
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Max-Age': '86400',
       },
     });
   }
-  /* Freie Plaetze: schmaler GET-Zweig fuer die Verknappungs-Anzeige.
-     Kein Body, keine Personendaten, nur Limit und Rest. */
-  if (request.method === 'GET'
-      && new URL(request.url).searchParams.get('action') === 'seats') {
-    if (!config.apiUrl || !config.apiKey) return json(500, { ok: false, error: 'config_missing' }, cors);
-    return seatsResponse(config, cors);
-  }
-
   if (request.method !== 'POST') return json(405, { ok: false, error: 'method_not_allowed' }, cors);
   if (!config.apiUrl || !config.apiKey) return json(500, { ok: false, error: 'config_missing' }, cors);
 
@@ -283,58 +274,6 @@ async function resolveFieldId(config, key) {
 }
 
 /** Ein HTTP-Aufruf gegen die AC-API v3. */
-/* ============================================================
-   Freie Plaetze
-   ------------------------------------------------------------
-   Gezaehlt wird ausschliesslich der echte Stand in ActiveCampaign.
-   Keine Schaetzung, keine Zufallszahl.
-   Spiegelbild von respondSeats() in activecampaign.php - Aenderungen
-   immer in BEIDEN Dateien nachziehen.
-   ============================================================ */
-
-async function seatsResponse(config, cors) {
-  if (!config.seatsLimit || config.seatsLimit <= 0) {
-    return json(200, { ok: false, error: 'seats_disabled' }, cors);
-  }
-
-  let taken = cacheGet('seats_taken', config.seatsCacheTtl);
-  if (taken === null) {
-    try {
-      taken = await countRegistrations(config);
-    } catch {
-      return json(502, { ok: false, error: 'upstream_failed' }, cors);
-    }
-    cacheSet('seats_taken', taken);
-  }
-
-  /* 'taken' wird bewusst nicht ausgeliefert - der bisherige
-     Anmeldestand geht die Oeffentlichkeit nichts an. */
-  return json(200, {
-    ok: true,
-    limit: config.seatsLimit,
-    remaining: Math.max(0, config.seatsLimit - taken),
-  }, cors);
-}
-
-/**
- * Zaehlt die Anmeldungen: bevorzugt ueber den Termin-Tag (damit ein
- * neuer Workshop wieder bei null anfaengt), sonst ueber die Liste.
- */
-async function countRegistrations(config) {
-  if (config.seatsTag) {
-    const tagId = await resolveTagId(config, config.seatsTag);
-    /* Tag noch nicht vorhanden = noch keine Anmeldung. */
-    if (!tagId) return 0;
-    const res = await acRequest(config, 'GET', `/api/3/contacts?limit=1&tagid=${encodeURIComponent(tagId)}`);
-    return Number(res?.meta?.total || 0);
-  }
-  if (config.listId) {
-    const res = await acRequest(config, 'GET', `/api/3/contacts?limit=1&status=1&listid=${encodeURIComponent(config.listId)}`);
-    return Number(res?.meta?.total || 0);
-  }
-  throw new Error('weder seatsTag noch listId konfiguriert');
-}
-
 async function acRequest(config, method, path, body) {
   const res = await fetch(config.apiUrl.replace(/\/$/, '') + path, {
     method,
@@ -388,10 +327,6 @@ function readConfig(env) {
     autoCreateTags: env.AC_AUTO_CREATE_TAGS !== '0',
     autoCreateFields: env.AC_AUTO_CREATE_FIELDS !== '0',
     allowedOrigins: list(env.AC_ALLOWED_ORIGINS),
-    /* Verknappungs-Anzeige: 0 (oder nicht gesetzt) = aus */
-    seatsLimit: Number(env.AC_SEATS_LIMIT || 0),
-    seatsTag: env.AC_SEATS_TAG || '',
-    seatsCacheTtl: Number(env.AC_SEATS_CACHE_TTL || 300) * 1000,
   };
 }
 
@@ -432,9 +367,9 @@ function slugify(value) {
     .replace(/^-+|-+$/g, '');
 }
 
-function cacheGet(key, ttl = CACHE_TTL) {
+function cacheGet(key) {
   const entry = cache.get(key);
-  if (!entry || Date.now() - entry.t > ttl) return null;
+  if (!entry || Date.now() - entry.t > CACHE_TTL) return null;
   return entry.v;
 }
 

@@ -992,45 +992,6 @@
 
   setupLetter();
 
-  /* ---------- Freie Plaetze (echter Stand aus dem CRM) ----------
-     Zeigt an, wie viele Plaetze vom Limit noch frei sind. Die Zahl
-     kommt vom Proxy, der sie in ActiveCampaign zaehlt - es wird
-     bewusst nichts geschaetzt oder hochgerechnet.
-
-     Ohne Anbindung, bei Fehler oder wenn nichts mehr frei ist, bleibt
-     der statische Satz stehen. Das Widget faellt also immer auf eine
-     wahre Aussage zurueck. */
-  var setupSeats = function () {
-    var live = document.querySelector("[data-seats-live]");
-    var slot = document.querySelector("[data-seats-remaining]");
-    if (!live || !slot || !CRM_ENDPOINT || !("fetch" in window)) return;
-
-    var url = CRM_ENDPOINT + (CRM_ENDPOINT.indexOf("?") === -1 ? "?" : "&") + "action=seats";
-
-    fetch(url, { method: "GET", credentials: "omit" })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (data) {
-        if (!data || !data.ok) return;
-        var remaining = Number(data.remaining);
-        /* Nur anzeigen, wenn es eine echte, positive Zahl ist.
-           Bei 0 bleibt der Anmeldeschluss-Satz stehen - der ist dann
-           immer noch korrekt und schreckt niemanden grundlos ab. */
-        if (!isFinite(remaining) || remaining <= 0) return;
-
-        slot.textContent = String(remaining);
-        live.hidden = false;
-
-        var fallback = document.querySelector("[data-seats-fallback]");
-        if (fallback) fallback.hidden = true;
-
-        var limitSlot = document.querySelector("[data-seats-limit]");
-        if (limitSlot && data.limit) limitSlot.textContent = String(data.limit);
-      })
-      .catch(function () { /* Anzeige bleibt wie sie ist */ });
-  };
-
-  setupSeats();
-
   /* ---------- Countdown bis zum Workshop-Start ----------
      Unterstützt mehrere Instanzen (Hero + finale CTA). */
   document.querySelectorAll("[data-countdown]").forEach(function (countdownEl) {

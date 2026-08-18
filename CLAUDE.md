@@ -24,6 +24,9 @@ assets/css/main.css   → Design-Tokens + alle Styles
 assets/js/main.js     → Tracking, Countdown, Popup, Formular-Validierung, CRM-Übergabe
 assets/fonts/         → La Luxes Serif Pro (Light/Regular/Medium, OTF)
 assets/img/           → Optimierte, umbenannte Bilder
+assets/img/og-*.jpg   → Share-Bilder für Linkvorschauen (aus tools/ erzeugt)
+tools/og-image.html   → Quelle der Share-Bilder, tools/render-og.sh rendert sie
+                        (wird nicht ausgeliefert, siehe .gitlab-ci.yml)
 Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
 ```
 
@@ -352,8 +355,41 @@ Einrichtung, Env-Variablen und Feldnamen stehen in **`api/README.md`**.
 - Keine erfundenen Zahlen/Bewertungen – belegte Fakten: Ex-Bankerin, 25 Jahre Private
   Banking, ProvenExpert-Siegel („Von Kunden empfohlen 2026", `assets/img/provenexpert.jpeg`)
 - Aktueller Termin: **Dienstag, 22. September 2026, 20:00 Uhr** – bei Änderung anpassen:
-  Meta-Chips, Countdown-`data-countdown`, Modal-Subline, Danke-Seite
+  Meta-Chips, Countdown-`data-countdown`, Modal-Subline, Danke-Seite,
+  Kalender-Deeplinks + `workshop.ics` und das **Share-Bild** (`tools/og-image.html`
+  nennt das Datum im Bild – Text ändern und `./tools/render-og.sh` neu laufen lassen)
 - Footer mit Impressum/Datenschutz (Links zur Hauptseite) auf jeder Seite.
+
+## Social-Media-Linkvorschau (Open Graph)
+Jede Seite trägt im `<head>` einen vollständigen OG-Block (`og:type`, `og:site_name`,
+`og:locale`, `og:url`, `og:title`, `og:description`, `og:image` inkl. `width`/`height`/
+`type`/`alt` sowie `twitter:card="summary_large_image"`). WhatsApp, Facebook, LinkedIn,
+Slack und iMessage lesen daraus die Vorschau – `noindex, nofollow` stört das nicht,
+die Crawler werten nur die OG-Tags aus.
+
+- **Zwei Motive**, beide 1200 × 630 (1.91:1, das von allen Netzwerken erwartete Format):
+  - `assets/img/og-share.jpg` – Workshop/Optin: Headline, Datum, Uhrzeit,
+    „100 % kostenlos". Genutzt von `index.html`, `404.html`, `danke/`, `danke/umfrage/`.
+  - `assets/img/og-termin.jpg` – Terminbuchung: 30-Minuten-Gespräch statt Workshop.
+    Genutzt von `termin/` und `danke/geschenk/`. Bewusst ein eigenes Motiv: Der
+    Termin-Link geht **im Webinar-Raum** raus, eine Vorschau mit Workshop-Datum
+    wäre dort schlicht falsch.
+- **Erzeugt aus `tools/og-image.html`** (Karo-Hintergrund, Gold-Radials, Gold-Chart,
+  Freisteller `alexandra-final-cutout.webp`, Signatur + ProvenExpert-Siegel – dieselben
+  Bausteine wie der Hero). Welche Karte gerendert wird, steuert der Hash
+  (`#workshop` / `#termin`). Rendern mit `./tools/render-og.sh` (Headless Chrome →
+  JPEG via `sips`). Die Datei liegt unter `tools/`, wird also **nicht deployt**.
+- **Nicht der Hero-Freisteller** (`alexandra-cutout.png`, nur 304 × 478) – für 1200 px
+  Breite zu klein. Das Share-Bild nutzt den hochauflösenden Freisteller mit 840 × 1553.
+- **JPEG statt PNG**: ~145 KB statt ~500 KB. WhatsApp lädt Vorschaubilder oberhalb von
+  ~300 KB teilweise gar nicht erst – Größe nach dem Rendern also im Blick behalten.
+- **Absolute URLs sind Pflicht**: relative `og:image`-Pfade werten die meisten Crawler
+  nicht aus. Die Tags zeigen fest auf `https://webinar.alexandra-feuerer.de/…` –
+  **bei einem Domainwechsel alle sechs Seiten anpassen.**
+- **Cache-Buster `?v=JJJJMMTT` am Bildpfad**: Facebook & Co. cachen Vorschaubilder
+  wochenlang pro URL. Nach einem neuen Rendern den Wert hochzählen, sonst zeigen
+  geteilte Links weiter das alte Bild. Zum sofortigen Neueinlesen zusätzlich den
+  Facebook Sharing Debugger bzw. den LinkedIn Post Inspector benutzen.
 
 ## Caching / Deployment
 `main.css` und `main.js` werden mit Versions-Parameter eingebunden
