@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://webinar.alexandra-feuerer.de/danke/">
   <meta property="og:title" content="Dein Platz ist reserviert | Alexandra Feuerer">
   <meta property="og:description" content="Deine Anmeldung für den kostenfreien Live-Workshop steht: Dienstag, 22. September, 20:00 Uhr – live &amp; online mit Ex-Bankerin Alexandra Feuerer.">
-  <meta property="og:image" content="https://webinar.alexandra-feuerer.de/assets/img/og-share.jpg?v=20260818">
+  <meta property="og:image" content="https://webinar.alexandra-feuerer.de/assets/img/og-share.jpg?v=20260818b">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/main.css?v=20260827">
+  <link rel="stylesheet" href="../assets/css/main.css?v=20260828">
 
   <!-- Google Tag Manager: Container-ID eintragen und Kommentar entfernen -->
   <!--
@@ -86,9 +86,11 @@
         </p>
       </div>
 
-      <!-- Willkommens-Video: Click-to-Play (kein Vimeo-Request vor dem Klick).
-           Steht per Grid-Platzierung auf Desktop rechts neben Text + Termin,
-           auf Mobile direkt unter der Überschrift. -->
+      <!-- Willkommens-Video: startet per data-video-autoplay von selbst – wegen
+           der Autoplay-Richtlinien der Browser zwingend stumm. main.js legt
+           eine "Ton einschalten"-Schaltfläche darüber; ohne JS bleibt es beim
+           Click-to-Play-Thumbnail. Steht per Grid-Platzierung auf Desktop
+           rechts neben Text + Termin, auf Mobile direkt unter der Überschrift. -->
       <div class="dhero__video" data-reveal="4">
         <p class="dhero__video-label">
           <span class="dhero__video-dot" aria-hidden="true"></span>
@@ -97,6 +99,7 @@
         <div class="vplayer">
           <button class="vplayer__media" type="button"
                   data-video-id="1201347693" data-video-name="danke_welcome" data-video-base="vplayer"
+                  data-video-autoplay
                   aria-label="Persönliche Videobotschaft von Alexandra Feuerer abspielen">
             <img class="vplayer__thumb" src="../assets/img/danke-welcome.jpg"
                  alt="Alexandra Feuerer begrüßt Dich in ihrer persönlichen Videobotschaft"
@@ -107,7 +110,7 @@
             <span class="vplayer__duration" aria-hidden="true">2:06</span>
           </button>
         </div>
-        <p class="dhero__video-note">Bitte einmal ansehen – darin erkläre ich Dir, wie Du das Meiste aus dem Workshop holst.</p>
+        <p class="dhero__video-note">Ich erkläre Dir, wie Du das Beste für Dich aus diesem Workshop herausholst.</p>
       </div>
 
       <div class="dhero__meta">
@@ -683,6 +686,6 @@
     </div>
   </footer>
 
-  <script src="../assets/js/main.js?v=20260827"></script>
+  <script src="../assets/js/main.js?v=20260828"></script>
 </body>
 </html>

@@ -55,16 +55,25 @@ Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
 - Meta-Chips: auf Desktop eine Zeile; auf Mobile werden Langtexte via `.chip__opt` gekürzt
 
 ## Anmelde-Flow
-- CTA öffnet `<dialog id="signup-modal">`: Vorname, E-Mail, Telefon (Pflichtfelder)
+- CTA öffnet `<dialog id="signup-modal">`: Vorname und E-Mail sind Pflicht,
+  **Telefon ist optional** (Kundenwunsch – weniger Hürde vor der Anmeldung).
+  Wird das Feld leer gelassen, geht der Kontakt ohne Telefonnummer an
+  ActiveCampaign; steht etwas drin, muss es plausibel sein (sonst wandert ein
+  Zahlendreher unbemerkt ins CRM). Der Kontakt-Schritt der **Umfrage** verlangt
+  die Nummer weiterhin – dort ist das Commitment höher.
 - Telefon mit Ländervorwahl-Select (Flaggen-Emoji, 🇩🇪 +49 vorausgewählt)
 - **Keine sichtbaren Labels** (Kundenwunsch: minimaler): Die Beschriftung steht im
-  Placeholder (`Dein Vorname*`, `Deine E-Mail-Adresse*`, `Deine Telefonnummer*`),
+  Placeholder (`Dein Vorname*`, `Deine E-Mail-Adresse*`,
+  `Deine Telefonnummer (optional)`),
   das `<label>` bleibt für Screenreader/Autofill im DOM und wird per CSS geclippt
   (`.form label, .quiz__fields label`). Gilt genauso für den Kontakt-Schritt der
   Umfrage. **Neues Feld heißt: Placeholder setzen** – sonst steht dort eine leere
   Box. Der `*` ersetzt die Pflichtfeld-Kennzeichnung des Labels.
 - JS-Validierung in `main.js`: E-Mail-Regex, Telefon-Plausibilität (6–14 Ziffern,
-  Fake-Nummern-Check), Fehlertexte via `#<feldid>-error` + `.is-invalid`
+  Fake-Nummern-Check), Fehlertexte via `#<feldid>-error` + `.is-invalid`.
+  Beim Telefon gilt im Optin `leer ODER plausibel` – die leere Eingabe ist
+  ausdrücklich erlaubt und wird serverseitig zu `''` (kein `phone`-Feld in AC,
+  insbesondere kein nacktes `+49`).
 - Submit: Übergabe an ActiveCampaign (siehe unten), danach Redirect auf `danke/`.
   Der Redirect erfolgt **immer** – auch wenn das CRM nicht antwortet.
   Ein verstecktes Honeypot-Feld (`name="website"`, Klasse `.hp`) fängt Bots ab.
@@ -81,7 +90,8 @@ die WhatsApp-Community ist komplett auf `danke/geschenk/` gewandert (siehe dort)
 Reihenfolge der Sektionen:
 1. **Hero** (`.dhero`, nutzt `.hero`-Hintergrund): Badge „Erfolgreich angemeldet", H1,
    Spam-Ordner-Hinweis, Termin-Karte, Countdown, CTA zu `#schritte` – rechts das
-   Willkommens-Video (Vimeo `1201347693`). Grid: Text + Termin links untereinander,
+   Willkommens-Video (Vimeo `1201347693`, startet stumm von selbst, siehe „Autoplay
+   im Hero"). Grid: Text + Termin links untereinander,
    Video rechts über beide Zeilen; unter 961px einspaltig, Video dann per DOM-Reihenfolge
    direkt unter der H1 (bleibt so above the fold).
 2. **Trust-Band** (`.trustrow`): ProvenExpert-Siegel + **3** Fakten
@@ -140,6 +150,20 @@ Reihenfolge der Sektionen:
   beim ersten Klick `player.js` nach und zieht den Ton über die Player-API nach
   (`setMuted(false)` → `setVolume(1)` → `play()`). Schlägt das fehl, läuft das Video
   weiter – nur stumm, entstummbar über die Vimeo-Steuerung.
+- **Autoplay im Hero:** Das Willkommens-Video trägt `data-video-autoplay` und startet
+  ohne Klick – **zwingend stumm**, weil alle Browser Ton ohne Nutzerinteraktion
+  verbieten. Darüber legt `main.js` die Schaltfläche `.vplayer__unmute`, die die
+  ganze Videofläche abdeckt: ein Tipp irgendwo schaltet den Ton ein, spult bei
+  `currentTime < 15 s` an den Anfang zurück und gibt danach die Vimeo-Steuerung frei.
+  Blockt der Browser sogar das stumme Autoplay (erkennbar an der Absage von `play()`,
+  **nicht** an einem ausbleibenden `play`-Ereignis – das wäre nur Puffern), heißt die
+  Beschriftung „Video starten". Kein Autoplay im Datensparmodus
+  (`navigator.connection.saveData`) und ohne JS – dort bleibt es beim Thumbnail.
+  Das Attribut lässt sich auf jedes `[data-video-id]` setzen; die Antwort-Videos
+  haben es bewusst **nicht** (fünf gleichzeitig startende Videos wären Chaos).
+  Preis des Autoplays: Vimeo wird jetzt **beim Seitenaufruf** kontaktiert, nicht
+  erst nach dem Klick (`dnt=1` bleibt gesetzt). Wer das nicht will, entfernt das
+  eine Attribut in `danke/index.html`.
 - **Kalender:** Google- und Outlook-Deeplink im HTML (UTC-Zeiten, `20260922T180000Z`),
   Apple/Outlook-Desktop über `workshop.ics` (Europe/Berlin + drei Erinnerungen:
   Vortag, 60 Min, 10 Min). Bei Terminänderung **alle drei** Ziele anpassen.
@@ -333,7 +357,11 @@ Einrichtung, Env-Variablen und Feldnamen stehen in **`api/README.md`**.
 - CTAs/Links: `data-track="cta_primary"` + `data-track-position="hero"`
 - Events: `lp_page_view`, `lp_cta_click`, `lp_scroll_depth` (25/50/75/100),
   `lp_form_open`, `lp_form_close`, `lp_form_error`, `lp_form_submit`,
-  `lp_video_play` (Testimonial-Videos, mit `lp_video_id`/`lp_video_name`),
+  `lp_video_play` (Videostart, mit `lp_video_id`/`lp_video_name` und
+  `lp_video_trigger` = `click` | `autoplay` – **das Autoplay im Danke-Hero feuert bei
+  jedem Seitenaufruf**, für „echte" Videostarts also auf `click` filtern),
+  `lp_video_unmute` (Ton beim Autoplay-Video eingeschaltet – das ist hier das
+  eigentliche Interessensignal),
   `lp_faq_open` (mit `lp_faq_id` aus `data-faq` des FAQ-Items),
   `lp_step_done` (Danke-Seite, mit `lp_step_id` + `lp_steps_done`),
   `lp_quiz_start`, `lp_quiz_step` (mit `lp_quiz_step` = Schrittnummer), `lp_quiz_submit`,
@@ -351,7 +379,7 @@ Einrichtung, Env-Variablen und Feldnamen stehen in **`api/README.md`**.
 - GTM-Snippet auskommentiert im `<head>` – Container-ID eintragen und aktivieren.
 
 ## Inhaltliche Leitplanken
-- Zielgruppe: Ü40, keine Vorkenntnisse, Altersvorsorge-Fokus. Ansprache: „Du".
+- Zielgruppe: Ü50, keine Vorkenntnisse, Altersvorsorge-Fokus. Ansprache: „Du".
 - Keine erfundenen Zahlen/Bewertungen – belegte Fakten: Ex-Bankerin, 25 Jahre Private
   Banking, ProvenExpert-Siegel („Von Kunden empfohlen 2026", `assets/img/provenexpert.jpeg`)
 - Aktueller Termin: **Dienstag, 22. September 2026, 20:00 Uhr** – bei Änderung anpassen:
@@ -466,6 +494,15 @@ nie – der Server zeigt dann seine eigene Standard-Fehlerseite.
   Storytelling-Brief mit CTA am Ende (`data-track-position="letter"`). Der Text wird
   beim Scrollen wortweise aufgedeckt: `setupLetter` in `main.js` zerlegt die Absätze in
   `.letter__w` und setzt `is-inked`, sobald ein Wort von unten ins Bild kommt.
+  Die **Unterschrift** darunter ist kein Strich-SVG mehr, sondern eine
+  gefüllte Breitfeder-Kontur (`fill="currentColor"`, Dick-Dünn-Wechsel,
+  12° Neigung) – die alte Fassung mit gleichmäßig dicker Linie wirkte laut
+  Kundenfeedback „kindisch". Erzeugt wird sie von **`tools/signature.py`**
+  (`python3 tools/signature.py --install`), dort stehen auch die Stützpunkte;
+  **nicht** von Hand in den Pfaddaten editieren. Weil Füllungen kein
+  `stroke-dashoffset` kennen, „schreibt" `main.js` sie über eine
+  `clip-path`-Blende von links nach rechts. Ohne JS und bei
+  `prefers-reduced-motion` steht sie sofort vollständig da.
   Das Abdunkeln hängt an `html[data-js]` – ohne JS und bei `prefers-reduced-motion`
   steht der Brief sofort vollständig da. Texte deshalb immer so schreiben, dass sie
   **ohne** den Effekt funktionieren. Die Ich-Formulierungen sind ein Entwurf und

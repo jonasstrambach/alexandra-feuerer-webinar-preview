@@ -1454,10 +1454,12 @@ html[data-js] .letter__body .letter__w.is-inked {
   margin-top: 30px;
 }
 
-/* Unterschrift: echter SVG-Pfad, der beim Scrollen gezeichnet wird.
-   Die Zuege liegen in Schreibreihenfolge im Markup – main.js laesst sie
-   nacheinander per stroke-dashoffset auflaufen. Ohne JS steht die
-   Unterschrift sofort fertig da (keine dasharray gesetzt). */
+/* Unterschrift: gefuellte Konturen einer Breitfeder – die Strichstaerke
+   wechselt mit der Zugrichtung (Abstriche dick, Aufstriche haarfein).
+   Deshalb KEINE stroke-Angaben setzen, die Form steckt in der Fuellung.
+   Das "Schreiben" beim Scrollen macht main.js ueber eine clip-path-Blende
+   von links nach rechts. Ohne JS steht die Unterschrift sofort da.
+   Neu erzeugen: tools/signature.py (siehe dort). */
 .letter__sig {
   display: block;
   width: min(304px, 80%);
@@ -2878,6 +2880,65 @@ html[data-js] .letter__body .letter__w.is-inked {
   border: 0;
 }
 
+/* Ton-Schaltflaeche ueber dem stumm gestarteten Autoplay-Video.
+   Browser erlauben Autoplay nur ohne Ton – der Knopf deckt deshalb die
+   ganze Videoflaeche ab: ein Tipp irgendwo schaltet den Ton ein, main.js
+   entfernt ihn danach und gibt die Vimeo-Steuerung frei. */
+.vplayer__unmute,
+.story__unmute {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 12px 16px;
+  border: 0;
+  background: linear-gradient(to top, rgba(39, 51, 73, 0.6), rgba(39, 51, 73, 0) 45%);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.vplayer__unmute-pill,
+.story__unmute-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--cta-grad);
+  color: var(--navy-deep);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 10px 26px rgba(39, 51, 73, 0.45);
+  animation: unmute-pulse 2.6s ease-in-out infinite;
+}
+
+.vplayer__unmute:hover .vplayer__unmute-pill,
+.vplayer__unmute:focus-visible .vplayer__unmute-pill,
+.story__unmute:hover .story__unmute-pill,
+.story__unmute:focus-visible .story__unmute-pill {
+  animation: none;
+  transform: scale(1.06);
+}
+
+.vplayer__unmute:focus-visible,
+.story__unmute:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: -3px;
+}
+
+@keyframes unmute-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 26px rgba(39, 51, 73, 0.45);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 14px 34px rgba(191, 161, 74, 0.5);
+  }
+}
+
 /* ---- Trust-Band unter dem Hero ---- */
 .trustrow {
   background: var(--white);
@@ -4155,6 +4216,10 @@ html[data-js] .letter__body .letter__w.is-inked {
   .btn-cal,
   .btn-wa {
     transition: none;
+  }
+
+  .vplayer__unmute-pill {
+    animation: none;
   }
 }
 

@@ -281,10 +281,13 @@
     });
   });
 
-  /* ---------- Video-Testimonials: Click-to-Play ----------
+  /* ---------- Video-Player: Click-to-Play (+ Autoplay im Danke-Hero) ----------
      Thumbnails statt eingebetteter Player (schneller Seitenaufbau, kein
      Vimeo-Request vor der Einwilligung des Nutzers). Erst der Klick ersetzt
-     den Button durch den Vimeo-Player mit Autoplay. */
+     den Button durch den Vimeo-Player mit Autoplay.
+     Ausnahme: [data-video-autoplay] startet ohne Klick – dann aber zwingend
+     STUMM, weil alle Browser Ton ohne Nutzerinteraktion verbieten. Darüber
+     legt main.js eine Ton-Schaltfläche (.<base>__unmute). */
   /* Vimeo-Player-API erst beim ersten Klick nachladen – vorher geht
      weiterhin kein Request an Vimeo raus. */
   var vimeoApi = null;
@@ -303,48 +306,134 @@
     return vimeoApi;
   };
 
-  document.querySelectorAll("[data-video-id]").forEach(function (btn) {
+  /* Ton-Schaltfläche über dem stumm gestarteten Video. Sie deckt die ganze
+     Fläche ab – ein Tipp irgendwo auf dem Video schaltet den Ton ein.
+     Wer früh tippt, sieht das Video von vorn; wer schon eine Weile zusieht,
+     bleibt an der aktuellen Stelle. */
+  var addUnmuteButton = function (wrap, base, ready, videoId, videoName) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = base + "__unmute";
+    btn.setAttribute("aria-label", "Ton einschalten");
+
+    var pill = document.createElement("span");
+    pill.className = base + "__unmute-pill";
+    pill.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+
+    var label = document.createElement("span");
+    label.textContent = "Ton einschalten";
+    pill.appendChild(label);
+    btn.appendChild(pill);
+    wrap.appendChild(btn);
+
+    ready.then(function (player) {
+      if (!player) return;
+      /* Blockt der Browser sogar das stumme Autoplay (strenge Einstellung,
+         Energiesparmodus), muss hier "Video starten" stehen – sonst tippt
+         niemand darauf. Verlässliches Signal ist die Absage von play(),
+         nicht ein ausbleibendes play-Ereignis: das kann auch nur langsames
+         Puffern sein. */
+      player.play().catch(function () {
+        return player.getPaused().then(function (paused) {
+          if (paused) label.textContent = "Video starten";
+        });
+      }).catch(function () { /* Zustand unklar – Beschriftung so lassen */ });
+    });
+
     btn.addEventListener("click", function () {
-      var videoId = btn.getAttribute("data-video-id");
-      var videoName = btn.getAttribute("data-video-name") || null;
-
-      /* Klassen-Präfix: Testimonials nutzen .story__*, die Danke-Seite .vplayer__* */
-      var base = btn.getAttribute("data-video-base") || "story";
-
-      var iframe = document.createElement("iframe");
-      iframe.className = base + "__iframe";
-      iframe.src = "https://player.vimeo.com/video/" + videoId +
-        "?autoplay=1&dnt=1&title=0&byline=0&portrait=0";
-      iframe.setAttribute("allow", "autoplay; fullscreen; picture-in-picture; encrypted-media");
-      iframe.setAttribute("allowfullscreen", "");
-      iframe.setAttribute("title", btn.getAttribute("aria-label") || "Videotestimonial");
-
-      var wrap = document.createElement("div");
-      wrap.className = base + "__media " + base + "__media--playing";
-      wrap.appendChild(iframe);
-      btn.replaceWith(wrap);
-
-      /* Wird der Player erst per JS eingehängt, startet Vimeo in mehreren
-         Browsern stumm (Autoplay-Richtlinie greift für das neue iframe).
-         Deshalb den Ton über die Player-API nachziehen. Schlägt das fehl,
-         läuft das Video weiter – nur eben stumm, und der Ton lässt sich
-         über die Vimeo-Steuerung selbst einschalten. */
-      loadVimeoApi().then(function (Player) {
-        if (!Player) return;
-        var player = new Player(iframe);
-        player.setMuted(false)
-          .then(function () { return player.setVolume(1); })
-          .then(function () { return player.play(); })
-          .catch(function () { /* Browser verbietet Ton ohne Interaktion */ });
-      }).catch(function () { /* API nicht erreichbar – Video läuft trotzdem */ });
-
+      btn.remove();
       window.dataLayer.push({
-        event: "lp_video_play",
+        event: "lp_video_unmute",
         lp_variant: VARIANT,
         lp_video_id: videoId,
         lp_video_name: videoName
       });
+      ready.then(function (player) {
+        if (!player) return;
+        player.getCurrentTime().then(function (time) {
+          return time < 15 ? player.setCurrentTime(0) : null;
+        }).catch(function () { /* Zeit unbekannt – dann eben ohne Rückspulen */ })
+          .then(function () { return player.setMuted(false); })
+          .then(function () { return player.setVolume(1); })
+          .then(function () { return player.play(); })
+          .catch(function () { /* Vimeo-Steuerung bleibt als Fallback sichtbar */ });
+      });
     });
+  };
+
+  /* Baut den Vimeo-Player anstelle des Thumbnail-Buttons.
+     trigger "click"    – Nutzer hat getippt, Ton sofort
+     trigger "autoplay" – Seitenaufruf, stumm + Ton-Schaltfläche */
+  var startVideo = function (btn, trigger) {
+    var videoId = btn.getAttribute("data-video-id");
+    var videoName = btn.getAttribute("data-video-name") || null;
+    var silent = trigger === "autoplay";
+
+    /* Klassen-Präfix: Testimonials nutzen .story__*, die Danke-Seite .vplayer__* */
+    var base = btn.getAttribute("data-video-base") || "story";
+
+    var iframe = document.createElement("iframe");
+    iframe.className = base + "__iframe";
+    iframe.src = "https://player.vimeo.com/video/" + videoId +
+      "?autoplay=1&dnt=1&title=0&byline=0&portrait=0&playsinline=1" +
+      (silent ? "&muted=1" : "");
+    iframe.setAttribute("allow", "autoplay; fullscreen; picture-in-picture; encrypted-media");
+    iframe.setAttribute("allowfullscreen", "");
+    iframe.setAttribute("title", btn.getAttribute("aria-label") || "Videotestimonial");
+
+    var wrap = document.createElement("div");
+    wrap.className = base + "__media " + base + "__media--playing";
+
+    /* Thumbnail als Hintergrund weiterreichen – sonst blitzt eine schwarze
+       Fläche auf, solange Vimeo noch lädt. */
+    var thumb = btn.querySelector("img");
+    if (thumb) {
+      wrap.style.backgroundImage = "url(" + (thumb.currentSrc || thumb.src) + ")";
+      wrap.style.backgroundSize = "cover";
+      wrap.style.backgroundPosition = "center";
+    }
+
+    wrap.appendChild(iframe);
+    btn.replaceWith(wrap);
+
+    var ready = loadVimeoApi().then(function (Player) {
+      return Player ? new Player(iframe) : null;
+    }).catch(function () { return null; /* API nicht erreichbar – Video läuft trotzdem */ });
+
+    if (silent) {
+      addUnmuteButton(wrap, base, ready, videoId, videoName);
+    } else {
+      /* Wird der Player erst per JS eingehängt, startet Vimeo in mehreren
+         Browsern stumm (die Autoplay-Richtlinie greift für das neue iframe).
+         Deshalb den Ton über die Player-API nachziehen. Schlägt das fehl,
+         läuft das Video weiter – nur eben stumm, und der Ton lässt sich
+         über die Vimeo-Steuerung selbst einschalten. */
+      ready.then(function (player) {
+        if (!player) return;
+        player.setMuted(false)
+          .then(function () { return player.setVolume(1); })
+          .then(function () { return player.play(); })
+          .catch(function () { /* Browser verbietet Ton ohne Interaktion */ });
+      });
+    }
+
+    window.dataLayer.push({
+      event: "lp_video_play",
+      lp_variant: VARIANT,
+      lp_video_id: videoId,
+      lp_video_name: videoName,
+      lp_video_trigger: trigger
+    });
+  };
+
+  document.querySelectorAll("[data-video-id]").forEach(function (btn) {
+    btn.addEventListener("click", function () { startVideo(btn, "click"); });
+
+    /* Autoplay nur dort, wo es ausdrücklich gewünscht ist (Danke-Hero) –
+       und nicht im Datensparmodus, wo ein ungefragter Videostream teuer wird. */
+    if (!btn.hasAttribute("data-video-autoplay")) return;
+    if (navigator.connection && navigator.connection.saveData) return;
+    startVideo(btn, "autoplay");
   });
 
   /* ---------- Personalisierung mit dem Vornamen ----------
@@ -921,31 +1010,23 @@
     }
 
     /* ---- Unterschrift ----
-       Jeder Zug wird per stroke-dashoffset "gezeichnet", nacheinander und
-       mit einer kurzen Pause dazwischen (das Absetzen des Stifts). Die
-       Dauer je Zug richtet sich nach seiner Laenge, damit das Tempo
-       gleichmaessig wirkt. */
-    var sigPaths = [].slice.call(document.querySelectorAll("[data-letter-sig] path"));
-    var sigLens = sigPaths.map(function (path) { return path.getTotalLength(); });
-    var sigSum = sigLens.reduce(function (a, b) { return a + b; }, 0) || 1;
+       Die Zuege sind gefuellte Konturen (Breitfeder-Kontur mit Dick-Duenn-
+       Wechsel), keine Striche - stroke-dashoffset greift daran nicht. Das
+       Schreiben entsteht deshalb ueber eine Blende, die von links nach
+       rechts aufzieht, also in Schreibrichtung.
+
+       Die Blende wird bewusst erst hier per JS gesetzt: ohne JS steht die
+       Unterschrift sofort vollstaendig da. */
+    var sig = document.querySelector("[data-letter-sig]");
     var sigDrawn = false;
 
-    sigPaths.forEach(function (path, i) {
-      path.style.strokeDasharray = sigLens[i] + " " + sigLens[i];
-      path.style.strokeDashoffset = sigLens[i];
-    });
+    if (sig) sig.style.clipPath = "inset(0 100% 0 0)";
 
     var drawSignature = function () {
-      if (sigDrawn) return;
+      if (sigDrawn || !sig) return;
       sigDrawn = true;
-      var delay = 0;
-      sigPaths.forEach(function (path, i) {
-        var dur = Math.max(70, 1050 * (sigLens[i] / sigSum));
-        path.style.transition = "stroke-dashoffset " + Math.round(dur) + "ms linear "
-          + Math.round(delay) + "ms";
-        path.style.strokeDashoffset = "0";
-        delay += dur + 26;
-      });
+      sig.style.transition = "clip-path 1100ms cubic-bezier(.55,.06,.5,.95)";
+      sig.style.clipPath = "inset(0 -2% 0 0)";
     };
 
     var inked = 0;
@@ -1392,7 +1473,11 @@
 
       var vornameOk = vorname.value.trim().length >= 2;
       var emailOk = isValidEmail(email.value.trim());
-      var telefonOk = isValidPhone(telefon.value.trim());
+      /* Telefon ist optional: leer ist in Ordnung. Nur wenn wirklich etwas
+         eingetippt wurde, muss es eine plausible Nummer sein - sonst
+         landet ein Zahlendreher unbemerkt im CRM. */
+      var telefonWert = telefon.value.trim();
+      var telefonOk = telefonWert === "" || isValidPhone(telefonWert);
 
       setFieldError(vorname, !vornameOk);
       setFieldError(email, !emailOk);
