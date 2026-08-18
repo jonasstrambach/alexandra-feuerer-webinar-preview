@@ -56,6 +56,132 @@
     lp_utms: utms
   });
 
+  /* ---------- CRM-Anbindung (ActiveCampaign) ----------
+     Der API-Key darf NIE hier stehen – alles in dieser Datei ist für
+     jeden Besucher lesbar, und mit dem Key hätte man Vollzugriff auf
+     die komplette Kontaktdatenbank. Die Formulardaten gehen deshalb an
+     einen kleinen Proxy auf dem eigenen Server (api/activecampaign.php
+     bzw. die Serverless-Variante), der den Key hält.
+
+     Endpunkt umstellen: hier ändern oder pro Seite über
+     <html data-crm-endpoint="…"> überschreiben. Ein leerer Wert
+     schaltet die Übertragung ab – die Seiten funktionieren dann wie
+     vorher (Weiterleitung ohne Übertragung).
+
+     Grundsatz an allen Stellen unten: Ein Fehler im CRM darf den
+     Nutzer nie aufhalten. Wer sich angemeldet hat, kommt auf die
+     Danke-Seite – notfalls landet die Anmeldung in der Wiedervorlage
+     und geht beim nächsten Seitenaufruf raus. */
+  var CRM_ENDPOINT = document.documentElement.getAttribute("data-crm-endpoint");
+  if (CRM_ENDPOINT === null) CRM_ENDPOINT = "/api/activecampaign.php";
+
+  var CRM_TIMEOUT   = 2500;                    /* so lange warten wir höchstens */
+  var CRM_QUEUE_KEY = "af_crm_queue";
+  var CRM_QUEUE_MAX = 10;
+  var CRM_QUEUE_TTL = 7 * 24 * 60 * 60 * 1000; /* Ältere Einträge verfallen */
+
+  function crmQueueRead() {
+    try {
+      var items = JSON.parse(localStorage.getItem(CRM_QUEUE_KEY) || "[]");
+      if (!Array.isArray(items)) return [];
+      var now = Date.now();
+      return items.filter(function (item) {
+        return item && item.ts && (now - item.ts) < CRM_QUEUE_TTL;
+      });
+    } catch (e) { return []; }
+  }
+
+  function crmQueueWrite(items) {
+    try {
+      localStorage.setItem(CRM_QUEUE_KEY, JSON.stringify(items.slice(-CRM_QUEUE_MAX)));
+    } catch (e) { /* Storage voll oder gesperrt – dann eben ohne Wiedervorlage */ }
+  }
+
+  function crmQueueAdd(payload) {
+    var items = crmQueueRead();
+    var known = items.some(function (item) { return item._id === payload._id; });
+    if (!known) items.push(payload);
+    crmQueueWrite(items);
+  }
+
+  function crmQueueRemove(id) {
+    crmQueueWrite(crmQueueRead().filter(function (item) { return item._id !== id; }));
+  }
+
+  /* Ein Sendeversuch. Ergebnis: "ok" | "invalid" (Retry zwecklos) |
+     "failed" (später erneut versuchen). */
+  function crmPost(payload) {
+    return fetch(CRM_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      /* keepalive: die Anfrage läuft weiter, auch wenn der Browser
+         parallel schon zur Danke-Seite navigiert. */
+      keepalive: true
+    }).then(function (res) {
+      if (res.ok) return "ok";
+      /* 4xx heißt: An den Daten stimmt etwas nicht – noch mal senden
+         ändert daran nichts. Nur 429 (zu viele Anfragen) lohnt später. */
+      if (res.status >= 400 && res.status < 500 && res.status !== 429) return "invalid";
+      return "failed";
+    }).catch(function () {
+      return "failed";   /* offline, DNS, CORS … */
+    });
+  }
+
+  /* Sendet und löst spätestens nach CRM_TIMEOUT auf, damit die
+     Weiterleitung nicht an einer langsamen API hängt. */
+  function crmSend(payload) {
+    if (!CRM_ENDPOINT) return Promise.resolve();
+
+    payload._id = String(Date.now()) + "-" + Math.random().toString(36).slice(2, 8);
+    payload.ts = Date.now();
+
+    var done = false;
+
+    var request = crmPost(payload).then(function (result) {
+      done = true;
+      if (result === "failed") {
+        crmQueueAdd(payload);
+        window.dataLayer.push({
+          event: "lp_crm_error",
+          lp_variant: VARIANT,
+          lp_crm_form: payload.form
+        });
+      } else {
+        /* Falls der Timeout schneller war und schon eingereiht hat */
+        crmQueueRemove(payload._id);
+      }
+    });
+
+    var timeout = new Promise(function (resolve) {
+      setTimeout(function () {
+        /* Antwort steht noch aus – wir warten nicht länger. Die Anfrage
+           läuft per keepalive weiter, die Wiedervorlage ist nur die
+           Absicherung. Doppelte Übertragung ist unkritisch: AC nutzt
+           die E-Mail als Schlüssel (contact/sync), Liste und Tags sind
+           ebenfalls idempotent. */
+        if (!done) crmQueueAdd(payload);
+        resolve();
+      }, CRM_TIMEOUT);
+    });
+
+    return Promise.race([request, timeout]);
+  }
+
+  /* Liegengebliebene Anmeldungen beim nächsten Seitenaufruf nachreichen.
+     Praktischer Nebeneffekt: Die Danke-Seite lädt direkt nach dem Optin
+     und räumt einen abgebrochenen Versuch sofort wieder auf. */
+  function crmFlush() {
+    if (!CRM_ENDPOINT) return;
+    crmQueueRead().forEach(function (item) {
+      crmPost(item).then(function (result) {
+        if (result !== "failed") crmQueueRemove(item._id);
+      });
+    });
+  }
+  crmFlush();
+
   /* ---------- CTA-Klicks ----------
      Jedes Element mit data-track="..." feuert ein Event.
      Zusätzliche Infos über data-track-position="hero" etc. */
@@ -407,6 +533,12 @@
     }
     if (!Array.isArray(done)) done = [];
 
+    /* Ein bereits entfernter Schritt darf aus einem alten localStorage-Stand
+       nicht nachhaengen - sonst zaehlt der Fortschritt mehr Erledigte als es
+       ueberhaupt Schritte gibt (z. B. "4 von 3 erledigt"). */
+    var stepIds = steps.map(function (step) { return step.getAttribute("data-step"); });
+    done = done.filter(function (id) { return stepIds.indexOf(id) !== -1; });
+
     var paint = function () {
       steps.forEach(function (step) {
         step.classList.toggle("is-done", done.indexOf(step.getAttribute("data-step")) !== -1);
@@ -439,6 +571,149 @@
     paint();
   };
   setupDankeSteps();
+
+  /* ---------- Goldenes Konfetti beim Laden ----------
+     Verstaerkt das "Glueckwunsch"-Gefuehl im Moment des Ankommens.
+     Laeuft auf einem fixen Canvas ueber der Seite (pointer-events: none),
+     fasst also kein Layout an und blockiert nichts. Ausgeloest wird es
+     nur von Seiten mit [data-confetti]; ist der letzte Schnipsel unten
+     durch, raeumt sich das Canvas selbst wieder ab.
+     Bei prefers-reduced-motion passiert gar nichts. */
+  var setupConfetti = function () {
+    if (!document.querySelector("[data-confetti]")) return;
+    if (!window.requestAnimationFrame) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext && canvas.getContext("2d");
+    if (!ctx) return;
+    canvas.className = "confetti";
+    canvas.setAttribute("aria-hidden", "true");
+
+    /* Gold-/Champagner-Palette aus den Design-Tokens: vorne der helle Ton,
+       hinten der dunklere. Beim Taumeln wird zwischen beiden gewechselt –
+       das laesst die Schnipsel wie echte, gedrehte Papierflaechen wirken. */
+    var COLORS = [
+      ["#f6e5ae", "#c9ab54"],
+      ["#e0c274", "#a3873a"],
+      ["#bfa14a", "#8c722c"],
+      ["#dbbd8e", "#b2915a"],
+      ["#fdfbf7", "#e2d3b4"]
+    ];
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0;
+    var h = 0;
+
+    var resize = function () {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    document.body.appendChild(canvas);
+    resize();
+    window.addEventListener("resize", resize);
+
+    var rand = function (min, max) { return min + Math.random() * (max - min); };
+
+    /* Menge an die Breite koppeln: auf dem Handy waeren 130 Schnipsel eine
+       geschlossene Wand, auf dem Desktop sehen 60 nach Zufall aus. */
+    var count = w < 620 ? 70 : (w < 1100 ? 100 : 130);
+    var pieces = [];
+
+    for (var i = 0; i < count; i++) {
+      var pal = COLORS[Math.floor(Math.random() * COLORS.length)];
+      var size = rand(6, 12);
+      pieces.push({
+        x: rand(-40, w + 40),
+        /* Gestaffelter Start oberhalb des Bildschirms: die Schnipsel rieseln
+           nach und nach herein statt als geschlossene Front */
+        y: rand(-h * 0.75, -20),
+        w: size,
+        h: size * rand(0.45, 1.1),
+        front: pal[0],
+        back: pal[1],
+        vx: rand(-24, 24),
+        vy: rand(130, 280),
+        rot: rand(0, Math.PI * 2),
+        spin: rand(-3.2, 3.2),
+        tilt: rand(0, Math.PI * 2),
+        tiltSpeed: rand(2.4, 6),
+        swayAmp: rand(10, 34),
+        swayFreq: rand(0.6, 1.5),
+        seed: rand(0, Math.PI * 2)
+      });
+    }
+
+    var frame = 0;
+    var last = 0;
+    var elapsed = 0;
+
+    var stop = function () {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+    };
+
+    var tick = function (now) {
+      if (!last) last = now;
+      /* Delta deckeln: nach einem Tab-Wechsel kaeme sonst ein Sprung von
+         mehreren Sekunden und alles waere auf einen Schlag unten durch. */
+      var dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      elapsed += dt;
+
+      ctx.clearRect(0, 0, w, h);
+      var alive = 0;
+
+      for (var j = 0; j < pieces.length; j++) {
+        var p = pieces[j];
+        if (p.y > h + 30) continue;
+        alive++;
+
+        p.vy += 120 * dt;                 /* Schwerkraft */
+        if (p.vy > 340) p.vy = 340;       /* Luftwiderstand – Papier faellt langsam */
+        p.y += p.vy * dt;
+        p.x += (p.vx + Math.sin(elapsed * p.swayFreq + p.seed) * p.swayAmp) * dt;
+        p.rot += p.spin * dt;
+        p.tilt += p.tiltSpeed * dt;
+
+        /* Seitlich herausgewehte Schnipsel kommen gegenueber wieder herein */
+        if (p.x < -60) p.x = w + 50;
+        else if (p.x > w + 60) p.x = -50;
+
+        /* Taumeln: die sichtbare Hoehe folgt dem Drehwinkel, beim Kippen
+           schlaegt die Farbe auf die dunklere Rueckseite um. */
+        var face = Math.cos(p.tilt);
+        var scale = Math.max(Math.abs(face), 0.12);
+
+        ctx.save();
+        /* Unten ausblenden statt an der Bildschirmkante abzuschneiden */
+        ctx.globalAlpha = p.y > h - 130 ? Math.max(0, (h - p.y) / 130) : 1;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = face >= 0 ? p.front : p.back;
+        ctx.fillRect(-p.w / 2, -(p.h * scale) / 2, p.w, p.h * scale);
+        ctx.restore();
+      }
+
+      /* Notbremse: haengt der Tab im Hintergrund, laeuft die Schleife sonst
+         theoretisch endlos weiter. */
+      if (!alive || elapsed > 14) {
+        stop();
+        return;
+      }
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+  };
+  setupConfetti();
 
   /* ---------- Mobile: Karten-Stapel (Vorteile + Kurz-Bewertungen) ----------
      Auf schmalen Viewports kleben die Karten per CSS position: sticky und
@@ -505,19 +780,20 @@
   };
   setupCardStack([].slice.call(document.querySelectorAll(".benefits__grid .benefit")));
   setupCardStack([].slice.call(document.querySelectorAll(".reviews__grid .review")));
+  setupCardStack([].slice.call(document.querySelectorAll(".myths__grid .myth")));
 
-  /* ---------- Bewertungen-Slider (Desktop, #bewertungen) ----------
+  /* ---------- Karussell (Bewertungen + Video-Testimonials) ----------
      Der Track (.reviews__grid) scrollt horizontal per CSS Scroll-Snap;
      hier nur Pfeil-/Punkt-Steuerung und deren Sichtbarkeit. Auf Mobile
      (< 601px) greift stattdessen der Sticky-Stapel – die Controls sind
      dort per CSS ausgeblendet, has-overflow ist wirkungslos. */
-  var setupReviewsSlider = function () {
-    var slider = document.querySelector(".reviews__slider");
+  var setupSlider = function (config) {
+    var slider = document.querySelector(config.slider);
     if (!slider) return;
-    var track = slider.querySelector(".reviews__grid");
+    var track = slider.querySelector(config.track);
     var prevBtn = slider.querySelector("[data-slider-prev]");
     var nextBtn = slider.querySelector("[data-slider-next]");
-    var dotsWrap = slider.querySelector(".reviews__dots");
+    var dotsWrap = slider.querySelector(config.dots);
     var cards = track ? [].slice.call(track.children) : [];
     if (!track || !prevBtn || !nextBtn || cards.length < 2) return;
 
@@ -553,8 +829,8 @@
           for (var i = 0; i < pages; i++) {
             var dot = document.createElement("button");
             dot.type = "button";
-            dot.className = "reviews__dot";
-            dot.setAttribute("aria-label", "Zu Bewertungen-Seite " + (i + 1));
+            dot.className = config.dotClass;
+            dot.setAttribute("aria-label", config.dotLabel + " " + (i + 1));
             dot.addEventListener("click", scrollToPage.bind(null, i));
             dotsWrap.appendChild(dot);
           }
@@ -582,7 +858,178 @@
     window.addEventListener("resize", update);
     update();
   };
-  setupReviewsSlider();
+  /* Bewertungen: Slider ab 601px. Video-Testimonials: Karussell nur auf
+     Mobile – beide nutzen dieselbe Mechanik, sichtbar wird die Steuerung
+     jeweils nur, wenn der Track wirklich ueberlaeuft (has-overflow). */
+  setupSlider({
+    slider: ".reviews__slider",
+    track: ".reviews__grid",
+    dots: ".reviews__dots",
+    dotClass: "reviews__dot",
+    dotLabel: "Zu Bewertungen-Seite"
+  });
+  setupSlider({
+    slider: ".stories__slider",
+    track: ".stories__grid",
+    dots: ".stories__dots",
+    dotClass: "stories__dot",
+    dotLabel: "Zu Video"
+  });
+
+  /* ---------- Persönlicher Brief: Text beim Scrollen "schreiben" ----------
+     Die Absätze werden in Wort-Spans zerlegt und an den Scroll-Fortschritt
+     gekoppelt aufgedeckt: Ein Wort wird sichtbar, sobald seine Zeile von
+     unten ins Bild kommt. Nur Textknoten werden angefasst, <em>/<strong>
+     bleiben dadurch erhalten. */
+  var setupLetter = function () {
+    var body = document.querySelector("[data-letter-body]");
+    if (!body) return;
+
+    var words = [];
+
+    var wrapWords = function (node) {
+      [].slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          if (!child.nodeValue.trim()) return;
+          var frag = document.createDocumentFragment();
+          child.nodeValue.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) {
+              frag.appendChild(document.createTextNode(part));
+              return;
+            }
+            var span = document.createElement("span");
+            span.className = "letter__w";
+            span.textContent = part;
+            frag.appendChild(span);
+            words.push(span);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          wrapWords(child);
+        }
+      });
+    };
+
+    wrapWords(body);
+    if (!words.length) return;
+
+    /* Bei reduzierter Bewegung sofort alles zeigen (CSS deckt es zusätzlich ab) */
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      words.forEach(function (word) { word.classList.add("is-inked"); });
+      return;
+    }
+
+    /* ---- Unterschrift ----
+       Jeder Zug wird per stroke-dashoffset "gezeichnet", nacheinander und
+       mit einer kurzen Pause dazwischen (das Absetzen des Stifts). Die
+       Dauer je Zug richtet sich nach seiner Laenge, damit das Tempo
+       gleichmaessig wirkt. */
+    var sigPaths = [].slice.call(document.querySelectorAll("[data-letter-sig] path"));
+    var sigLens = sigPaths.map(function (path) { return path.getTotalLength(); });
+    var sigSum = sigLens.reduce(function (a, b) { return a + b; }, 0) || 1;
+    var sigDrawn = false;
+
+    sigPaths.forEach(function (path, i) {
+      path.style.strokeDasharray = sigLens[i] + " " + sigLens[i];
+      path.style.strokeDashoffset = sigLens[i];
+    });
+
+    var drawSignature = function () {
+      if (sigDrawn) return;
+      sigDrawn = true;
+      var delay = 0;
+      sigPaths.forEach(function (path, i) {
+        var dur = Math.max(70, 1050 * (sigLens[i] / sigSum));
+        path.style.transition = "stroke-dashoffset " + Math.round(dur) + "ms linear "
+          + Math.round(delay) + "ms";
+        path.style.strokeDashoffset = "0";
+        delay += dur + 26;
+      });
+    };
+
+    var inked = 0;
+
+    var paint = function () {
+      var rect = body.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      /* 0 = Oberkante des Briefs erreicht 85 % Bildschirmhöhe,
+         1 = Unterkante hat denselben Punkt passiert. Ein Wort wird also
+         genau dann sichtbar, wenn es von unten ins Bild scrollt. */
+      var span = rect.height || 1;
+      var progress = (vh * 0.85 - rect.top) / span;
+      progress = Math.max(0, Math.min(1, progress));
+
+      /* Kurz vor dem Ende des Textes setzt Alexandra die Unterschrift */
+      if (progress > 0.9) drawSignature();
+
+      var target = Math.round(progress * words.length);
+      if (target === inked) return;
+
+      var i;
+      if (target > inked) {
+        for (i = inked; i < target; i++) words[i].classList.add("is-inked");
+      } else {
+        for (i = inked - 1; i >= target; i--) words[i].classList.remove("is-inked");
+      }
+      inked = target;
+    };
+
+    var queued = false;
+    var onScroll = function () {
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () {
+        queued = false;
+        paint();
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    paint();
+  };
+
+  setupLetter();
+
+  /* ---------- Freie Plaetze (echter Stand aus dem CRM) ----------
+     Zeigt an, wie viele Plaetze vom Limit noch frei sind. Die Zahl
+     kommt vom Proxy, der sie in ActiveCampaign zaehlt - es wird
+     bewusst nichts geschaetzt oder hochgerechnet.
+
+     Ohne Anbindung, bei Fehler oder wenn nichts mehr frei ist, bleibt
+     der statische Satz stehen. Das Widget faellt also immer auf eine
+     wahre Aussage zurueck. */
+  var setupSeats = function () {
+    var live = document.querySelector("[data-seats-live]");
+    var slot = document.querySelector("[data-seats-remaining]");
+    if (!live || !slot || !CRM_ENDPOINT || !("fetch" in window)) return;
+
+    var url = CRM_ENDPOINT + (CRM_ENDPOINT.indexOf("?") === -1 ? "?" : "&") + "action=seats";
+
+    fetch(url, { method: "GET", credentials: "omit" })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        if (!data || !data.ok) return;
+        var remaining = Number(data.remaining);
+        /* Nur anzeigen, wenn es eine echte, positive Zahl ist.
+           Bei 0 bleibt der Anmeldeschluss-Satz stehen - der ist dann
+           immer noch korrekt und schreckt niemanden grundlos ab. */
+        if (!isFinite(remaining) || remaining <= 0) return;
+
+        slot.textContent = String(remaining);
+        live.hidden = false;
+
+        var fallback = document.querySelector("[data-seats-fallback]");
+        if (fallback) fallback.hidden = true;
+
+        var limitSlot = document.querySelector("[data-seats-limit]");
+        if (limitSlot && data.limit) limitSlot.textContent = String(data.limit);
+      })
+      .catch(function () { /* Anzeige bleibt wie sie ist */ });
+  };
+
+  setupSeats();
 
   /* ---------- Countdown bis zum Workshop-Start ----------
      Unterstützt mehrere Instanzen (Hero + finale CTA). */
@@ -771,7 +1218,36 @@
       return data;
     };
 
+    /* Antworten fürs CRM: pro Frage der maschinenlesbare Wert (wird zum
+       Tag) und der sichtbare Text (landet als Klartext im AC-Kontakt,
+       damit Alexandra die Antworten vor dem Gespräch lesen kann). */
+    var collectAnswers = function () {
+      var answers = {};
+      var add = function (name, value, label) {
+        if (!answers[name]) answers[name] = { values: [], labels: [] };
+        answers[name].values.push(value);
+        answers[name].labels.push(label);
+      };
+
+      quizForm.querySelectorAll("input[type=radio], input[type=checkbox]").forEach(function (input) {
+        if (!input.checked) return;
+        var box = input.parentNode ? input.parentNode.querySelector(".qopt__box") : null;
+        add(input.name, input.value, box ? box.textContent.trim() : input.value);
+      });
+
+      /* Freitext-Frage: Wert und Text sind dasselbe */
+      quizForm.querySelectorAll("textarea").forEach(function (area) {
+        var value = area.value.trim();
+        if (value) add(area.name, value, value);
+      });
+
+      return answers;
+    };
+
+    var quizSending = false;
+
     var submit = function () {
+      if (quizSending) return;
       var data = collect();
 
       window.dataLayer.push({
@@ -780,10 +1256,6 @@
         lp_page_type: PAGE_TYPE
       });
 
-      /* TODO: Antworten an CRM / E-Mail-Tool senden (Webhook, Zapier, API).
-         Bis dahin nur Log + Weiterleitung auf die Geschenk-Seite. */
-      console.log("Umfrage:", data);
-
       storeLead({
         vorname: data.vorname || "",
         email: data.email || "",
@@ -791,9 +1263,31 @@
         vorwahl: data.vorwahl || ""
       });
 
-      var target = "../geschenk/";
-      if (data.vorname) target += "?vorname=" + encodeURIComponent(data.vorname);
-      window.location.href = target;
+      var weiter = function () {
+        var target = "../geschenk/";
+        if (data.vorname) target += "?vorname=" + encodeURIComponent(data.vorname);
+        window.location.href = target;
+      };
+
+      /* Antworten an denselben Kontakt in ActiveCampaign hängen –
+         contact/sync findet ihn über die E-Mail aus dem Optin. */
+      quizSending = true;
+      if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.classList.add("is-sending");
+      }
+      crmSend({
+        form: "quiz",
+        vorname: data.vorname || "",
+        email: data.email || "",
+        vorwahl: data.vorwahl || "",
+        telefon: data.telefon || "",
+        variant: VARIANT,
+        page: window.location.pathname,
+        utms: utms,
+        answers: collectAnswers(),
+        hp: quizForm.website ? quizForm.website.value : ""
+      }).then(weiter, weiter);
     };
 
     var goTo = function (nextIndex) {
@@ -847,17 +1341,40 @@
   };
   setupQuiz();
 
-  /* Wer auf der Geschenk-Seite landet, hat die Umfrage abgeschlossen –
-     Schritt auf der Danke-Seite entsprechend abhaken. */
+  /* ---------- Geschenk-Seite: Schritte der Danke-Seite mitpflegen ----------
+     Die Seite hat selbst keine .step-Liste, setupDankeSteps steigt hier also
+     sofort aus. Der Stand im localStorage wird deshalb direkt geschrieben –
+     die Danke-Seite zeigt ihn beim nächsten Aufruf an. */
   if (PAGE_TYPE === "geschenk") {
-    try {
-      var doneSteps = JSON.parse(localStorage.getItem("af_danke_steps") || "[]");
-      if (!Array.isArray(doneSteps)) doneSteps = [];
-      if (doneSteps.indexOf("umfrage") === -1) {
-        doneSteps.push("umfrage");
+    var rememberDankeStep = function (id, notify) {
+      if (!id) return;
+      try {
+        var doneSteps = JSON.parse(localStorage.getItem("af_danke_steps") || "[]");
+        if (!Array.isArray(doneSteps)) doneSteps = [];
+        if (doneSteps.indexOf(id) !== -1) return;
+        doneSteps.push(id);
         localStorage.setItem("af_danke_steps", JSON.stringify(doneSteps));
-      }
-    } catch (e) { /* Storage nicht verfügbar – ignorieren */ }
+        if (notify) {
+          window.dataLayer.push({
+            event: "lp_step_done",
+            lp_variant: VARIANT,
+            lp_step_id: id,
+            lp_steps_done: doneSteps.length
+          });
+        }
+      } catch (e) { /* Storage nicht verfügbar – ignorieren */ }
+    };
+
+    /* Wer hier landet, hat die Umfrage abgeschlossen. Ohne Event: der Schritt
+       wird nicht angeklickt, sondern nur nachgetragen. */
+    rememberDankeStep("umfrage", false);
+
+    /* Die Kalender-Buttons am Seitenende haken den Kalender-Schritt ab. */
+    document.querySelectorAll("[data-step-action][data-step-target]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        rememberDankeStep(el.getAttribute("data-step-target"), true);
+      });
+    });
   }
 
   /* ---------- Anmelde-Popup ---------- */
@@ -936,15 +1453,31 @@
       return true;
     };
 
+    /* Sendezustand des Buttons – verhindert Doppel-Anmeldungen und
+       zeigt, dass etwas passiert, solange der Proxy antwortet. */
+    var submitBtn = form.querySelector("button[type=submit]");
+    var sending = false;
+    var setSending = function (on) {
+      sending = on;
+      if (!submitBtn) return;
+      submitBtn.disabled = on;
+      if (on) submitBtn.classList.add("is-sending");
+      else submitBtn.classList.remove("is-sending");
+    };
+
     form.addEventListener("submit", function (event) {
       event.preventDefault();
 
+      if (sending) return;
       if (!validateForm()) return;
+
+      var vorwahl = form.vorwahl.value;
+      var nummer = form.telefon.value.trim();
 
       var data = {
         vorname: form.vorname.value.trim(),
         email: form.email.value.trim(),
-        telefon: form.vorwahl.value + " " + form.telefon.value.trim(),
+        telefon: vorwahl + " " + nummer,
         variant: VARIANT,
         utms: utms
       };
@@ -954,11 +1487,6 @@
         lp_variant: VARIANT,
         lp_page_type: PAGE_TYPE
       });
-
-      /* TODO: Anbindung an E-Mail-/Webinar-Tool (z. B. ActiveCampaign,
-         WebinarGeek, Zoom) – hier den API-Call bzw. das Form-Post einbauen.
-         Bis dahin: Weiterleitung zur Danke-Seite. */
-      console.log("Anmeldung:", data);
 
       /* Vorname für die persönliche Ansprache auf der Danke-Seite mitgeben.
          Zusätzlich in der Session, falls das Tool die Query-Parameter später
@@ -970,11 +1498,29 @@
       storeLead({
         vorname: data.vorname,
         email: data.email,
-        telefon: form.telefon.value.trim(),
-        vorwahl: form.vorwahl.value
+        telefon: nummer,
+        vorwahl: vorwahl
       });
 
-      window.location.href = "danke/?vorname=" + encodeURIComponent(data.vorname);
+      var weiter = function () {
+        window.location.href = "danke/?vorname=" + encodeURIComponent(data.vorname);
+      };
+
+      /* An ActiveCampaign übergeben (Liste + Tags setzt der Proxy).
+         Telefon getrennt, damit der Server sauber auf E.164 normalisieren
+         kann – "0151 …" mit Vorwahl +49 wäre sonst falsch. */
+      setSending(true);
+      crmSend({
+        form: "optin",
+        vorname: data.vorname,
+        email: data.email,
+        vorwahl: vorwahl,
+        telefon: nummer,
+        variant: VARIANT,
+        page: window.location.pathname,
+        utms: utms,
+        hp: form.website ? form.website.value : ""
+      }).then(weiter, weiter);
     });
   }
 })();

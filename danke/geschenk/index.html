@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/main.css?v=20260819">
+  <link rel="stylesheet" href="../../assets/css/main.css?v=20260826">
 
   <!-- Google Tag Manager: Container-ID eintragen und Kommentar entfernen -->
   <!--
@@ -29,7 +29,7 @@
         <img class="brand__logo" src="../../assets/img/logo-blau.svg" alt="Alexandra Feuerer Logo" width="108" height="104">
         <span class="brand__text">
           <span class="brand__name">Alexandra Feuerer</span>
-          <span class="brand__claim">Finanzielle Freiheit durch Wissen</span>
+          <span class="brand__claim">Einfach, sicher an der Börse investieren lernen</span>
         </span>
       </a>
     </div>
@@ -43,6 +43,10 @@
     </span>
 
     <div class="container ghero__inner">
+      <img class="ghero__me" src="../../assets/img/alexandra-avatar.jpg"
+           alt="Alexandra Feuerer" width="100" height="100" fetchpriority="high"
+           data-reveal="1">
+
       <span class="badge-done" data-reveal="1">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
         Umfrage abgeschickt
@@ -63,6 +67,14 @@
         Es fehlt nur noch eine Sache: Dein Geschenk übergebe ich Dir persönlich –
         such Dir gleich hier unten Deinen Termin aus.
       </p>
+
+      <a class="cta cta--sm ghero__cta" href="#termin" data-reveal="4"
+         data-track="cta_booking" data-track-position="hero">
+        <span class="cta__label">
+          Geschenk einlösen
+          <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
+        </span>
+      </a>
     </div>
   </section>
 
@@ -179,12 +191,8 @@
            alt="ProvenExpert-Siegel: Von Kunden empfohlen 2026" width="72" height="72" loading="lazy">
       <div class="trustrow__facts">
         <div class="trustfact">
-          <span class="trustfact__num">4,98<span class="trustfact__sub">/5</span></span>
-          <span class="trustfact__label">auf ProvenExpert</span>
-        </div>
-        <div class="trustfact">
-          <span class="trustfact__num">100&nbsp;%</span>
-          <span class="trustfact__label">Weiterempfehlung</span>
+          <span class="trustfact__num">5 Sterne</span>
+          <span class="trustfact__label">auf Google/ProvenExpert</span>
         </div>
         <div class="trustfact">
           <span class="trustfact__num">2.000+</span>
@@ -198,35 +206,96 @@
     </div>
   </section>
 
-  <!-- ================= Erinnerung: Workshop-Termin ================= -->
-  <section class="wacta">
+  <!-- ================= Termin in den Kalender =================
+       Zweitplatzierung der Kalender-Buttons von der Danke-Seite: Wer über die
+       Umfrage hierher kommt, hat den Schritt dort oft übersprungen. Deeplinks
+       und ICS sind identisch zu danke/index.html – bei Terminänderung beide
+       Seiten (und workshop.ics) nachziehen.
+       Die Buttons melden den Schritt "kalender" über data-step-target an den
+       localStorage-Stand der Danke-Seite zurück (siehe main.js). -->
+  <section class="calcta" id="kalender">
+    <div class="container">
+      <div class="calcta__box" data-scroll-reveal>
+        <span class="calcta__date" aria-hidden="true">
+          <span class="calcta__date-m">Sep</span>
+          <span class="calcta__date-d">22</span>
+        </span>
+
+        <div class="calcta__body">
+          <span class="calcta__chip">Damit nichts dazwischenkommt</span>
+          <h2 class="calcta__title">Trag Dir den Workshop in den Kalender ein</h2>
+          <p class="calcta__text">
+            Du wirst am Vortag, eine Stunde und 10 Minuten vor dem Start erinnert –
+            und der Link zum Workshop-Raum steht direkt im Termin. Ein Klick, dann
+            ist der Abend geblockt.
+          </p>
+          <p class="calcta__meta"><span class="calcta__meta-day">Dienstag, </span>22. September · 20:00 Uhr · 90 Min live</p>
+        </div>
+
+        <div class="calcta__actions">
+          <a class="btn-cal" target="_blank" rel="noopener"
+             data-step-action data-step-target="kalender"
+             data-track="calendar_google" data-track-position="gift"
+             href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Live-Workshop%3A+B%C3%B6rse+%26+Altersvorsorge+%E2%80%93+mit+Alexandra+Feuerer&amp;dates=20260922T180000Z%2F20260922T193000Z&amp;details=Sch%C3%B6n%2C+dass+Du+dabei+bist+%E2%80%93+Dein+Platz+ist+reserviert.%0A%0ADEIN+ZUGANG+ZUM+WORKSHOP-RAUM%3A%0Ahttps%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F%0AEinfach+kurz+vor+dem+Start+anklicken+%E2%80%93+mehr+brauchst+Du+nicht.%0A%0ADARUM+GEHT+ES%3A%0A90+Minuten+live+und+online+mit+Alexandra+Feuerer%2C+Ex-Bankerin+mit+25+Jahren+Private-Banking-Erfahrung.+Du+erf%C3%A4hrst%2C+wie+Du+auch+mit+%C3%9C40+einfach+und+planbar+an+der+B%C3%B6rse+investierst+und+f%C3%BCrs+Alter+vorsorgst+%E2%80%93+ohne+Vorkenntnisse%2C+ohne+gro%C3%9Fes+Startkapital+und+ohne+Risiko-Spielereien.%0A%0ADAS+NIMMST+DU+MIT%3A%0A-+Ein+bew%C3%A4hrtes+System+mit+klaren+Regeln+statt+Bauchentscheidungen%0A-+Einen+Weg%2C+der+auch+bei+einem+sp%C3%A4ten+Start+noch+zu+Dir+passt%0A-+Eine+Umsetzung%2C+die+neben+Job+und+Familie+funktioniert%0A-+Klarheit+dar%C3%BCber%2C+wo+Du+heute+stehst+und+was+Dein+n%C3%A4chster+Schritt+ist%0A%0ASO+HOLST+DU+DAS+MEISTE+HERAUS%3A%0A-+Sei+5+Minuten+vorher+im+Raum%2C+dann+verpasst+Du+nichts%0A-+Am+besten+an+Laptop+oder+Tablet%2C+mit+Ton%0A-+Stift+und+Zettel+bereitlegen+%E2%80%93+es+gibt+viel+zum+Mitschreiben%0A-+Nimm+Dir+die+90+Minuten+bewusst+Zeit%2C+ohne+Nebenbei%0A%0AIch+freue+mich+auf+Dich%21%0AAlexandra%0A%0AFalls+Du+die+E-Mail+mit+Deinem+pers%C3%B6nlichen+Zugangslink+nicht+findest+%28bitte+auch+im+Spam-Ordner+schauen%29%3A+%C3%9Cber+den+Link+oben+kommst+Du+jederzeit+in+den+Workshop-Raum.&amp;location=Online-Workshop-Raum%3A+https%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F&amp;ctz=Europe%2FBerlin">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Google
+          </a>
+          <a class="btn-cal" href="../workshop.ics" download="workshop-alexandra-feuerer.ics"
+             data-step-action data-step-target="kalender"
+             data-track="calendar_apple" data-track-position="gift">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+            Apple / iPhone
+          </a>
+          <a class="btn-cal" target="_blank" rel="noopener"
+             data-step-action data-step-target="kalender"
+             data-track="calendar_outlook" data-track-position="gift"
+             href="https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&amp;rru=addevent&amp;subject=Live-Workshop%3A+B%C3%B6rse+%26+Altersvorsorge+%E2%80%93+mit+Alexandra+Feuerer&amp;startdt=2026-09-22T18%3A00%3A00Z&amp;enddt=2026-09-22T19%3A30%3A00Z&amp;body=Sch%C3%B6n%2C+dass+Du+dabei+bist+%E2%80%93+Dein+Platz+ist+reserviert.%0A%0ADEIN+ZUGANG+ZUM+WORKSHOP-RAUM%3A%0Ahttps%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F%0AEinfach+kurz+vor+dem+Start+anklicken+%E2%80%93+mehr+brauchst+Du+nicht.%0A%0ADARUM+GEHT+ES%3A%0A90+Minuten+live+und+online+mit+Alexandra+Feuerer%2C+Ex-Bankerin+mit+25+Jahren+Private-Banking-Erfahrung.+Du+erf%C3%A4hrst%2C+wie+Du+auch+mit+%C3%9C40+einfach+und+planbar+an+der+B%C3%B6rse+investierst+und+f%C3%BCrs+Alter+vorsorgst+%E2%80%93+ohne+Vorkenntnisse%2C+ohne+gro%C3%9Fes+Startkapital+und+ohne+Risiko-Spielereien.%0A%0ADAS+NIMMST+DU+MIT%3A%0A-+Ein+bew%C3%A4hrtes+System+mit+klaren+Regeln+statt+Bauchentscheidungen%0A-+Einen+Weg%2C+der+auch+bei+einem+sp%C3%A4ten+Start+noch+zu+Dir+passt%0A-+Eine+Umsetzung%2C+die+neben+Job+und+Familie+funktioniert%0A-+Klarheit+dar%C3%BCber%2C+wo+Du+heute+stehst+und+was+Dein+n%C3%A4chster+Schritt+ist%0A%0ASO+HOLST+DU+DAS+MEISTE+HERAUS%3A%0A-+Sei+5+Minuten+vorher+im+Raum%2C+dann+verpasst+Du+nichts%0A-+Am+besten+an+Laptop+oder+Tablet%2C+mit+Ton%0A-+Stift+und+Zettel+bereitlegen+%E2%80%93+es+gibt+viel+zum+Mitschreiben%0A-+Nimm+Dir+die+90+Minuten+bewusst+Zeit%2C+ohne+Nebenbei%0A%0AIch+freue+mich+auf+Dich%21%0AAlexandra%0A%0AFalls+Du+die+E-Mail+mit+Deinem+pers%C3%B6nlichen+Zugangslink+nicht+findest+%28bitte+auch+im+Spam-Ordner+schauen%29%3A+%C3%9Cber+den+Link+oben+kommst+Du+jederzeit+in+den+Workshop-Raum.&amp;location=Online-Workshop-Raum%3A+https%3A%2F%2Fwebinar.alexandra-feuerer.de%2Fwebinarraum%2F">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Outlook
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Abschluss: WhatsApp-Community =================
+       Steht bewusst erst hier und nicht auf der Danke-Seite: Dort würde sie von
+       den 6 Fragen ablenken. Wer bis hierher kommt, hat die Umfrage ausgefüllt –
+       das Commitment steht, jetzt ist der richtige Moment dafür.
+       Bleibt bewusst der letzte Block der Seite (Sign-off) – der Kalender-Block
+       steht davor. -->
+  <section class="wacta" id="community">
     <div class="container">
       <div class="wacta__box" data-scroll-reveal>
         <div class="wacta__body">
           <span class="wacta__chip">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            Dein Workshop-Termin steht
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
+            Über 2.000 Frauen sind schon dabei
           </span>
 
           <p class="wacta__quote">
-            Wir sehen uns am 22. September um 20:00 Uhr.
+            „Du musst diesen Weg nicht alleine gehen – und Du sollst ihn auch nicht
+            alleine gehen müssen."
           </p>
 
           <p class="wacta__text">
-            Falls Du den Termin noch nicht im Kalender hast oder noch nicht in der
-            WhatsApp-Community bist – beides findest Du auf der vorherigen Seite.
-            Dauert keine zwei Minuten.
+            Ein Schritt fehlt noch: In meiner WhatsApp-Community bekommst Du Deine
+            Workshop-Erinnerung, regelmäßige Impulse und den direkten Draht zu mir.
+            Ein Klick, jederzeit kündbar.
           </p>
 
-          <a class="btn-cal btn-cal--solid" href="../#schritte"
-             data-track="back_to_steps" data-track-position="gift">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-            Zurück zu Deinen Schritten
+          <a class="btn-wa btn-wa--lg" target="_blank" rel="noopener"
+             data-track="whatsapp_join" data-track-position="gift"
+             data-wa-sign="Viele Grüße,"
+             href="https://api.whatsapp.com/send/?phone=%2B4915560647029&amp;text=Hallo+Alexandra%21+Ich+m%C3%B6chte+in+deine+WhatsApp-Community+und+meine+Workshop-Erinnerungen+erhalten.&amp;type=phone_number&amp;app_absent=0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm5.424-7.403c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.884-.788-1.48-1.761-1.654-2.059-.173-.297-.019-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.199.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.073.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+            Jetzt der Community beitreten
           </a>
 
+
           <p class="wacta__signoff">
-            Ich freue mich auf Dich<span data-name-if>, <span data-name-slot></span></span>.
-            <span class="wacta__sign">Deine Alexandra</span>
+            Ich freue mich auf Dich<span data-name-if>, <span data-name-slot></span></span> –
+            wir sehen uns am 22. September. <span class="wacta__sign">Deine Alexandra</span>
           </p>
         </div>
 
@@ -256,6 +325,6 @@
     </div>
   </footer>
 
-  <script src="../../assets/js/main.js?v=20260819"></script>
+  <script src="../../assets/js/main.js?v=20260826"></script>
 </body>
 </html>

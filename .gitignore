@@ -4,3 +4,5 @@ Alexandra Feurer bilder/
 # ActiveCampaign-Zugangsdaten – nie ins Repository (siehe api/config.sample.php)
 api/config.php
 api/ac-errors.log
+api/.cache/
+.env

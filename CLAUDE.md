@@ -19,8 +19,9 @@ danke/umfrage/        → Quiz-Funnel zur Lead-Qualifizierung (7 Schritte)
 danke/geschenk/       → Danke-Seite nach der Umfrage, führt zur Terminbuchung
 termin/index.html     → Terminbuchung für den Live-Pitch (Link geht im Webinar-Raum raus)
 404.html              → Fehlerseite (muss serverseitig als ErrorDocument gesetzt werden)
+api/                  → ActiveCampaign-Proxy (PHP + Serverless), siehe api/README.md
 assets/css/main.css   → Design-Tokens + alle Styles
-assets/js/main.js     → Tracking, Countdown, Popup, Formular-Validierung
+assets/js/main.js     → Tracking, Countdown, Popup, Formular-Validierung, CRM-Übergabe
 assets/fonts/         → La Luxes Serif Pro (Light/Regular/Medium, OTF)
 assets/img/           → Optimierte, umbenannte Bilder
 Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
@@ -53,32 +54,53 @@ Alexandra Feurer bilder/ → Quell-Bilder (Original, nicht direkt verlinken)
 ## Anmelde-Flow
 - CTA öffnet `<dialog id="signup-modal">`: Vorname, E-Mail, Telefon (Pflichtfelder)
 - Telefon mit Ländervorwahl-Select (Flaggen-Emoji, 🇩🇪 +49 vorausgewählt)
+- **Keine sichtbaren Labels** (Kundenwunsch: minimaler): Die Beschriftung steht im
+  Placeholder (`Dein Vorname*`, `Deine E-Mail-Adresse*`, `Deine Telefonnummer*`),
+  das `<label>` bleibt für Screenreader/Autofill im DOM und wird per CSS geclippt
+  (`.form label, .quiz__fields label`). Gilt genauso für den Kontakt-Schritt der
+  Umfrage. **Neues Feld heißt: Placeholder setzen** – sonst steht dort eine leere
+  Box. Der `*` ersetzt die Pflichtfeld-Kennzeichnung des Labels.
 - JS-Validierung in `main.js`: E-Mail-Regex, Telefon-Plausibilität (6–14 Ziffern,
   Fake-Nummern-Check), Fehlertexte via `#<feldid>-error` + `.is-invalid`
-- Submit: aktuell `console.log` + Redirect auf `danke/` –
-  **TODO: Anbindung E-Mail-/Webinar-Tool** (API-Call im Submit-Handler markiert)
+- Submit: Übergabe an ActiveCampaign (siehe unten), danach Redirect auf `danke/`.
+  Der Redirect erfolgt **immer** – auch wenn das CRM nicht antwortet.
+  Ein verstecktes Honeypot-Feld (`name="website"`, Klasse `.hp`) fängt Bots ab.
 - Sticky-CTA auf Mobile (`#sticky-cta`, ≤ 720px): fixe Leiste am unteren Rand,
   erscheint per Scroll-Listener, sobald der Hero-CTA oben rausgescrollt ist,
   und verschwindet, sobald der Footer sichtbar wird. Tracking:
   `data-track-position="sticky"`.
 
 ## Danke-Seite (`danke/`)
-Zweck: Trust aufbauen und die drei Folge-Aktionen auslösen. Reihenfolge der Sektionen:
+Zweck: Trust aufbauen und **die Umfrage auslösen**. Seit 18.08.2026 gilt: Die Seite hat
+nur ein Ziel – die 6 Fragen. Alles, was davon ablenkt, ist raus (Kundenfeedback:
+„zu viele CTAs"). Der Kalender-Eintrag bleibt als zweiter, kleinerer Schritt stehen,
+die WhatsApp-Community ist komplett auf `danke/geschenk/` gewandert (siehe dort).
+Reihenfolge der Sektionen:
 1. **Hero** (`.dhero`, nutzt `.hero`-Hintergrund): Badge „Erfolgreich angemeldet", H1,
    Spam-Ordner-Hinweis, Termin-Karte, Countdown, CTA zu `#schritte` – rechts das
    Willkommens-Video (Vimeo `1201347693`). Grid: Text + Termin links untereinander,
    Video rechts über beide Zeilen; unter 961px einspaltig, Video dann per DOM-Reihenfolge
    direkt unter der H1 (bleibt so above the fold).
-2. **Trust-Band** (`.trustrow`): ProvenExpert-Siegel + 4 Fakten.
-3. **Vier Schritte** (`#schritte`) – Reihenfolge ist die Prioritätsreihenfolge des
-   Kunden: `kalender` → `umfrage` → `whatsapp` → `videos`. Die Videos stehen bewusst
-   zuletzt (niedrigste Priorität). Der Umfrage-Schritt ist der Kernschritt und optisch
-   hervorgehoben (`.step--key` + `.step__ribbon` „Wichtigster Schritt" + Geschenk-Hinweis).
+2. **Trust-Band** (`.trustrow`): ProvenExpert-Siegel + **3** Fakten
+   (Bewertung, Kundinnen, Jahre). Bewusst nur drei, damit sie auch auf Mobile
+   in eine Zeile passen – ein vierter Fakt bricht die Reihe um.
+   Die Bewertung steht als „5 Sterne auf Google/ProvenExpert" (Kundenwunsch,
+   statt der exakten 4,98/5).
+3. **Zwei Schritte** (`#schritte`) – Reihenfolge: `umfrage` → `kalender`.
+   Die Umfrage steht bewusst **vorn** und ist optisch hervorgehoben (`.step--key`
+   + `.step__ribbon` „Wichtigster Schritt" + Geschenk-Hinweis) – sie ist das
+   Commitment, um das es auf dieser Seite geht. Der Kalender-Schritt läuft ohne
+   `.cta` (nur `.btn-cal`), damit er nicht dagegen antritt.
+   Bis 18.08.2026 waren es drei Schritte: `kalender` stand vorn, `whatsapp`
+   dahinter – beides auf Kundenwunsch geändert. Ein vierter Schritt
+   „Antwort-Videos ansehen" fiel schon vorher weg; die Videos bleiben als
+   Sektion `#antworten`, haken aber keinen Schritt mehr ab.
    Jeder Schritt lässt sich abhaken – `setupDankeSteps` in `main.js`, Stand im
    localStorage (`af_danke_steps`), Fortschrittsbalken darüber. Elemente mit
    `data-step-action` haken den umgebenden `.step[data-step]` ab,
-   `data-step-target="<id>"` überschreibt das (nutzen die Antwort-Videos und die
-   finale WhatsApp-Box).
+   `data-step-target="<id>"` überschreibt das (nutzt die Abschluss-Box).
+   Schritt-IDs aus einem alten localStorage-Stand, die es nicht mehr gibt, werden
+   beim Laden verworfen – sonst stünde dort „3 von 2 erledigt".
 4. **Antwort-Videos** (`#antworten`, dunkel): 5 Vimeo-Videos zu den häufigsten
    Einwänden – ersetzen das FAQ-Akkordeon der Optin-Seite. Darstellung im
    **9:16-Hochformat** (`.vplayer--portrait`).
@@ -88,9 +110,24 @@ Zweck: Trust aufbauen und die drei Folge-Aktionen auslösen. Reihenfolge der Sek
    von Alexandra machen das durchgängig.
 5. **Video-Testimonials** (`#stimmen`) und **Kurz-Bewertungen** (`#bewertungen`):
    identisches Markup wie auf der Optin-Seite (Pfade mit `../`).
-6. **Abschluss** (`.wacta`): helle Creme-Box mit WhatsApp-CTA (kein dunkles Band –
-   Kundenfeedback), Freisteller läuft rechts unten aus der Box.
+6. **Abschluss** (`.wacta`, `#fragen`): helle Creme-Box (kein dunkles Band –
+   Kundenfeedback), Freisteller läuft rechts unten aus der Box. Inhalt ist
+   **derselbe CTA wie in Schritt 1** – die Umfrage, mit dem 500-€-Geschenk als
+   Chip. Hier stand bis 18.08.2026 die WhatsApp-Community; wer hier landet, soll
+   genau eine Sache tun können.
 
+- **Konfetti beim Laden:** `setupConfetti` in `main.js` hängt ein fixes Canvas
+  (`.confetti`, z-index 70, `pointer-events: none`) über die Seite und lässt
+  goldene Schnipsel herunterrieseln – rund 5 s, danach entfernt es sich selbst.
+  Ausgelöst wird es allein durch das Attribut `data-confetti` auf der
+  Hero-Sektion; ohne das Attribut passiert auf einer Seite nichts (so lässt es
+  sich später z. B. auf `danke/geschenk/` nachziehen). Palette = Gold/Champagner
+  aus den Tokens, jedes Teilchen hat eine helle Vorder- und eine dunkle
+  Rückseite, die beim Taumeln umschlägt. Menge hängt an der Viewport-Breite
+  (70 / 100 / 130). Bei `prefers-reduced-motion` startet es gar nicht.
+  Es läuft bei **jedem** Aufruf der Seite – auch bei der Rückkehr aus Kalender
+  oder WhatsApp. Soll es nur einmal pro Session feuern, braucht es eine Marke
+  im `sessionStorage`.
 - **Video-Player:** eigenes Präfix `.vplayer__*` (16:9 im Hero, 9:16 bei den
   Antwort-Videos), Click-to-Play. `data-video-base="vplayer"` steuert, welche Klassen
   `main.js` beim Klick erzeugt; ohne das Attribut bleibt es bei `.story__*`
@@ -103,6 +140,8 @@ Zweck: Trust aufbauen und die drei Folge-Aktionen auslösen. Reihenfolge der Sek
 - **Kalender:** Google- und Outlook-Deeplink im HTML (UTC-Zeiten, `20260922T180000Z`),
   Apple/Outlook-Desktop über `workshop.ics` (Europe/Berlin + drei Erinnerungen:
   Vortag, 60 Min, 10 Min). Bei Terminänderung **alle drei** Ziele anpassen.
+  Dieselben drei Links stehen ein zweites Mal auf `danke/geschenk/` (Block
+  `.calcta`) – bei Änderungen **beide Seiten** nachziehen.
   - Titel/Beschreibung/Ort sind in allen drei Zielen **wortgleich** – die Deeplinks
     tragen nur die URL-codierte Fassung desselben Textes. Änderungen also immer
     dreifach nachziehen, sonst sehen Google-Nutzer etwas anderes als iPhone-Nutzer.
@@ -119,8 +158,10 @@ Zweck: Trust aufbauen und die drei Folge-Aktionen auslösen. Reihenfolge der Sek
     75 Oktetts gefaltet (Folgezeile beginnt mit Space). Beim Bearbeiten nicht per
     Hand umbrechen – lieber die Datei neu erzeugen. `SEQUENCE` bei inhaltlichen
     Änderungen hochzählen, damit Clients den bereits importierten Termin aktualisieren.
-- **Externe Links:** WhatsApp-Community `+49 155 60647029` (vorbefüllter Text,
-  per `data-wa-sign` mit dem Vornamen unterschrieben – siehe Personalisierung).
+- **Kein WhatsApp-Link mehr auf dieser Seite** – weder als Schritt noch im
+  Abschluss. Er steht jetzt ausschließlich auf `danke/geschenk/`. Wieder
+  einbauen nur nach Rücksprache: Es war explizites Kundenfeedback, dass hier
+  außer der Umfrage nichts konkurriert.
 
 ## Umfrage-Funnel (`danke/umfrage/` → `danke/geschenk/`)
 Ziel: Lead qualifizieren, Workshop inhaltlich vorbereiten und **vor** dem Workshop
@@ -137,8 +178,10 @@ sichtbar (`.quiz__step.is-active`).
   wie das Optin-Popup (`isValidEmail`/`isValidPhone`, im äußeren Scope von `main.js`).
 - Fragen decken ab: Ausgangslage, Altersvorsorge-Gefühl, Glaubenssätze/Einwände,
   bisherige Versuche, Ziel in 12 Monaten, Erwartung an eine Begleitung.
-- Submit → `console.log` + Redirect auf `../geschenk/`.
-  **TODO: Antworten ans CRM/E-Mail-Tool senden** (Webhook im Submit-Handler markiert).
+- Submit → Antworten an ActiveCampaign (siehe unten), danach Redirect auf `../geschenk/`.
+  `collectAnswers` in `main.js` liest zu jeder Antwort **Wert und sichtbaren Text** aus
+  (`.qopt__box`). Der Wert wird zum Tag, der Text landet als Klartext im AC-Feld –
+  deshalb bei neuen Antwortoptionen die `.qopt__box`-Struktur beibehalten.
 
 **Vorbefüllung:** Kontaktdaten liegen als `sessionStorage.af_lead` (JSON) –
 bewusst **nicht** in der URL, sonst stünden E-Mail und Telefon in Browser-Verlauf und
@@ -147,6 +190,14 @@ Referrer-Headern (Vimeo, WhatsApp). Nur der Vorname wandert per Parameter mit
 akzeptiert, falls später ein E-Mail-Tool direkt auf die Umfrage verlinkt.
 
 **Geschenk-Seite** (`danke/geschenk/`): Bestätigung + Terminbuchung.
+Über dem Badge steht ein kleines rundes Porträt (`.ghero__me`, 100 px / 80 px mobil,
+Quelle `assets/img/alexandra-avatar.jpg` mit nur 160×160 – nicht größer skalieren):
+Der Hero-Text ist in der Ich-Form geschrieben, das Bild gibt ihm ein Gesicht.
+Darunter ein kleiner CTA „Geschenk einlösen" (`.ghero__cta`) als reine Sprungmarke
+auf `#termin`. Er nutzt die kompakte CTA-Variante `.cta--sm` (gleicher Look, weniger
+Padding, kein `.cta__note`, bleibt auch unter 480px schmal) – der eigentliche
+Abschluss ist das Calendly-Widget direkt darunter, deshalb tritt der Button
+bewusst leiser auf. Scrollt nativ über `scroll-behavior: smooth`, kein JS nötig.
 Das Geschenk ist der „persönliche Finanz-Fahrplan" (Wert 500 €) – bewusst **kein**
 Download, sondern die kostenfreie 30-Minuten-Standortbestimmung, die Alexandra
 persönlich übergibt. Verknappung über begrenzte Termine vor dem Workshop.
@@ -165,6 +216,21 @@ persönlich übergibt. Verknappung über begrenzte Termine vor dem Workshop.
 - Wording bewusst „Standortbestimmung"/„Orientierung", nicht „Anlageberatung" –
   siehe Haftungsausschluss im Footer.
 - Der Aufruf hakt den Umfrage-Schritt auf der Danke-Seite automatisch ab.
+- **Kalender-Block** (`.calcta`, `#kalender`) zwischen Trust-Band und WhatsApp-
+  Abschluss: dieselben drei Ziele wie auf der Danke-Seite (Google, `../workshop.ics`,
+  Outlook), weil viele den Schritt dort überspringen. Bewusst als flache, breite
+  Leiste gebaut und nicht als zweite große Box – sonst konkurriert sie mit dem
+  WhatsApp-CTA, der die Seite abschließt. Die Buttons melden über
+  `data-step-target="kalender"` an den localStorage-Stand der Danke-Seite zurück
+  (eigener kleiner Schreiber in `main.js` unter `PAGE_TYPE === "geschenk"` –
+  `setupDankeSteps` steigt hier mangels `.step`-Liste sofort aus).
+- **WhatsApp-Community** (`.wacta`, `#community`, ganz unten): seit 18.08.2026 hier
+  statt auf der Danke-Seite. Begründung des Kunden: erst das Commitment über den
+  Fragebogen, dann die Community – und dafür dann prominent (heller Kasten,
+  grüner `.btn-wa--lg`, Chip „Über 2.000 Frauen"). Nummer `+49 155 60647029`,
+  vorbefüllter Text, per `data-wa-sign` mit dem Vornamen unterschrieben
+  (siehe Personalisierung). Der Hinweis zurück zum Kalender steht darunter
+  bewusst klein (`.wacta__hint`), damit er nicht als zweiter CTA auftritt.
 
 ## Termin-Seite (`termin/`)
 Zweck: **Der Link, der live im Webinar-Raum ausgegeben wird**, wenn Alexandra pitcht.
@@ -223,6 +289,40 @@ verschluckt). Auf der Danke-Seite:
   nie ein leerer Platzhalter in der Nachricht. Deshalb den Grundtext im HTML immer
   so schreiben, dass er **ohne** Unterschrift vollständig ist.
 
+## ActiveCampaign-Anbindung (`api/`)
+Optin-Popup und Umfrage übergeben ihre Daten an einen serverseitigen Proxy, der
+den Kontakt anlegt, auf die Liste setzt und die Tags vergibt.
+Einrichtung, Env-Variablen und Feldnamen stehen in **`api/README.md`**.
+
+- **Warum ein Proxy:** Der AC-API-Key hat Vollzugriff auf die Kontaktdatenbank.
+  In `main.js` wäre er für jeden Besucher lesbar. Er darf **nie** ins Frontend –
+  auch nicht "nur zum Testen".
+- Zwei gleichwertige Umsetzungen, dieselbe Logik:
+  `api/activecampaign.php` (Apache-Webspace) und `api/activecampaign.mjs`
+  (Netlify/Vercel/Cloudflare). **Änderungen immer in beiden nachziehen** –
+  insbesondere die Feld-Zuordnung (`fields` in `config.sample.php` ↔ `FIELD_MAP`).
+- Zugangsdaten: `api/config.php` (aus `config.sample.php` kopiert, gitignored)
+  bzw. Environment-Variablen. `api/.htaccess` sperrt Config, Logs und Cache.
+- Endpunkt im Frontend: `CRM_ENDPOINT` in `main.js`, überschreibbar per
+  `<html data-crm-endpoint="…">`. **Leerer Wert schaltet die Anbindung ab** –
+  die Seiten funktionieren dann wie vorher, nur ohne Übertragung.
+- **Der Nutzer wird nie blockiert:** `main.js` wartet höchstens 2,5 s auf den
+  Proxy und leitet dann weiter. Fehlgeschlagene Übertragungen landen im
+  `localStorage` (`af_crm_queue`) und gehen beim nächsten Seitenaufruf raus –
+  meist Sekunden später auf der Danke-Seite. Bei Änderungen an den
+  Submit-Handlern diese Reihenfolge beibehalten.
+- Doppelte Übertragungen sind unkritisch: `contact/sync` nutzt die E-Mail als
+  Schlüssel, Listen- und Tag-Zuweisung sind idempotent. Die Umfrage erzeugt
+  deshalb **keinen zweiten Kontakt**, sondern ergänzt den aus dem Optin.
+- Antworten landen doppelt in AC – als Klartext im Feld (lesbar vor dem
+  Gespräch) und als Tag `umfrage-<frage>-<antwort>` (segmentierbar).
+- Fehlende Tags und Felder legt der Proxy selbst an (`auto_create_*`).
+  Beim Wechsel auf einen neuen Workshop-Termin den Tag in der Config anpassen
+  (`webinar-2026-09-22`) – sonst laufen alle Termine in denselben Tag.
+- Telefonnummern werden **serverseitig** auf E.164 normalisiert
+  (`+49` + `0151 …` → `+4915123456789`). Deshalb schickt das Frontend Vorwahl
+  und Nummer getrennt – nicht zusammengesetzt.
+
 ## Tracking-Konventionen
 - `<html data-variant="optin-a" data-page-type="optin">` – jede Seite/Variante kennzeichnen.
   Die Fehlerseite läuft als `data-variant="404"` / `data-page-type="404"`, ihr CTA als
@@ -234,7 +334,11 @@ verschluckt). Auf der Danke-Seite:
   `lp_faq_open` (mit `lp_faq_id` aus `data-faq` des FAQ-Items),
   `lp_step_done` (Danke-Seite, mit `lp_step_id` + `lp_steps_done`),
   `lp_quiz_start`, `lp_quiz_step` (mit `lp_quiz_step` = Schrittnummer), `lp_quiz_submit`,
-  `lp_booking_step` / `lp_booking_scheduled` (eingebetteter Calendly-Kalender)
+  `lp_booking_step` / `lp_booking_scheduled` (eingebetteter Calendly-Kalender),
+  `lp_crm_error` (Übergabe an ActiveCampaign fehlgeschlagen, mit `lp_crm_form`)
+- **`lp_crm_error` als Alarm einrichten:** Einzelne Fehler sind normal (Offline,
+  Ad-Blocker). Steigt die Zahl plötzlich, hängt der Proxy oder AC – dann kommen
+  Anmeldungen nur noch verzögert über die Wiedervorlage an.
 - **Buchungen messen:** Calendly meldet den Fortschritt per `postMessage` an die
   einbettende Seite – Voraussetzung ist das von `main.js` gesetzte `embed_domain`.
   `lp_booking_scheduled` ist die eigentliche Conversion; ein `lp_cta_click` auf den
@@ -253,7 +357,7 @@ verschluckt). Auf der Danke-Seite:
 
 ## Caching / Deployment
 `main.css` und `main.js` werden mit Versions-Parameter eingebunden
-(`assets/css/main.css?v=20260817`). **Nach jeder Änderung an CSS oder JS den Wert in
+(`assets/css/main.css?v=20260822`). **Nach jeder Änderung an CSS oder JS den Wert in
 allen HTML-Dateien hochzählen** (Datum im Format JJJJMMTT), sonst zeigen Browser
 wiederkehrender Besucher das alte Stylesheet – neue Sektionen wirken dann komplett
 ungestylt, alte sehen korrekt aus.
@@ -280,7 +384,12 @@ nie – der Server zeigt dann seine eigene Standard-Fehlerseite.
   vorher per JS auf `auto` stellen, sonst greift `scrollTo` nicht.
 
 ## Offene Punkte
-- Anmelde-Mechanik (E-Mail-/Webinar-Tool) anbinden
+- ActiveCampaign scharfschalten: Zugangsdaten eintragen, Listen-ID setzen,
+  Backend-Variante wählen (`api/README.md`). Code steht, aber ohne Config
+  läuft die Übertragung ins Leere.
+- Webinar-Tool (Zugangslink, Erinnerungen) anbinden – bisher übernimmt
+  ActiveCampaign nur den Kontakt, nicht die Webinar-Einladung.
+- Double-Opt-in-Frage mit Alexandra klären (siehe `api/README.md`).
 - Weitere Sektionen: "Das lernst Du"
   (Finale CTA ist umgesetzt: `#anmelden` (`.finalcta`) nach dem FAQ – kompakte **helle**
   Creme-Box (`.finalcta__box`, abgerundet, Gold-Rand) auf Creme-Grund, kein Full-Width-Band
@@ -299,6 +408,32 @@ nie – der Server zeigt dann seine eigene Standard-Fehlerseite.
   Video-Testimonials umgesetzt: `#stimmen` nach "Über Alexandra", 4 Videos im
   2×2-Grid mit Vimeo-Click-to-Play, Thumbnails lokal `assets/img/testimonial-*.jpg`
   via Vimeo-oEmbed geladen;
+  Mobile-Verhalten der beiden neuen/angepassten Sektionen: Der Mythen-Check nutzt unter
+  600px denselben Sticky-Karten-Stapel wie Vorteile und Bewertungen (`setupCardStack`),
+  die Karten brauchen dort einen **deckenden** Hintergrund – halbtransparent scheint der
+  Text der Karte darunter durch. Die Video-Testimonials (`#stimmen`) laufen unter 600px
+  als Karussell: `.stories__slider` umschliesst Track und Steuerung, die Mechanik ist
+  dieselbe wie beim Bewertungs-Slider – aus `setupReviewsSlider` wurde das generische
+  `setupSlider({slider, track, dots, dotClass, dotLabel})`, das beide Sektionen bedient.
+  Die Steuerung erscheint nur bei `has-overflow`, deshalb bleibt sie auf Desktop
+  automatisch unsichtbar. Beide Regelblöcke stehen am **Dateiende** von `main.css`,
+  weil sie frühere Mobile-Regeln derselben Sektionen überschreiben müssen.
+  Mythen-Check umgesetzt: `.myths` (`#mythen`) direkt nach den Vorteilen und vor dem
+  Zitat-Band – acht Vorurteile der Zielgruppe als kompakte Karten (Serif-Zitat +
+  kurze Antwort, goldener Balken links, zwei Spalten ab 861px). Bewusst **keine**
+  Doppelung mit dem FAQ: Startkapital, Vorkenntnisse, Risiko, „zu spät" und
+  Seriosität stehen dort ausführlich, hier stehen die Einwände, die das FAQ nicht
+  abdeckt (Geschlechterrollen, „mein Mann macht das", „meine Rente reicht" …).
+  „Zu spät" fehlt hier absichtlich – das behandeln schon Zitat-Band und FAQ.
+  Persönlicher Brief umgesetzt: `.letter` (`#brief`) zwischen „Über Alexandra" und
+  `#stimmen` – Papier-Karte (Klebestreifen, goldener Notizblock-Rand, leicht gekippt),
+  Storytelling-Brief mit CTA am Ende (`data-track-position="letter"`). Der Text wird
+  beim Scrollen wortweise aufgedeckt: `setupLetter` in `main.js` zerlegt die Absätze in
+  `.letter__w` und setzt `is-inked`, sobald ein Wort von unten ins Bild kommt.
+  Das Abdunkeln hängt an `html[data-js]` – ohne JS und bei `prefers-reduced-motion`
+  steht der Brief sofort vollständig da. Texte deshalb immer so schreiben, dass sie
+  **ohne** den Effekt funktionieren. Die Ich-Formulierungen sind ein Entwurf und
+  müssen von Alexandra freigegeben werden;
   Zitat-Band umgesetzt: `.quoteband` zwischen Vorteilen und "Über Alexandra" –
   kompaktes Alexandra-Zitat zum „zu alt"-Einwand mit Watermark „ZU ALT?",
   Avatar `assets/img/alexandra-avatar.jpg` = Gesichts-Crop aus `alexandra-portrait.webp`;
@@ -319,7 +454,9 @@ nie – der Server zeigt dann seine eigene Standard-Fehlerseite.
   des Karten-Stapels greift nicht)
 - Optin-Variante B für A/B-Test
 - Höher aufgelöstes Hero-Freisteller-Bild vom Kunden anfragen (aktuell 440×660)
-- Umfrage-Antworten ans CRM anbinden (Submit-Handler in `setupQuiz`).
+- Terminbuchung an AC melden: Calendly hat eine native ActiveCampaign-Integration –
+  meist besser als ein eigener Tag über `lp_booking_scheduled`, weil Calendly auch
+  Absagen und Verschiebungen kennt.
 - Impressum/Datenschutz verlinken bewusst weiter auf `www.alexandra-feuerer.de`,
   weil es diese Seiten hier nicht gibt. Logo und alle sonstigen Verweise auf die
   Hauptseite zeigen dagegen auf `/` (Kundenwunsch: kein Traffic-Abfluss aus dem Funnel).

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/main.css?v=20260819">
+  <link rel="stylesheet" href="../assets/css/main.css?v=20260826">
 
   <!-- Google Tag Manager: Container-ID eintragen und Kommentar entfernen -->
   <!--
@@ -29,7 +29,7 @@
         <img class="brand__logo" src="../assets/img/logo-blau.svg" alt="Alexandra Feuerer Logo" width="108" height="104">
         <span class="brand__text">
           <span class="brand__name">Alexandra Feuerer</span>
-          <span class="brand__claim">Finanzielle Freiheit durch Wissen</span>
+          <span class="brand__claim">Einfach, sicher an der Börse investieren lernen</span>
         </span>
       </a>
     </div>
@@ -38,7 +38,7 @@
   <!-- ================= Hero: Bestätigung + Willkommens-Video =================
        Personalisierung: [data-name-slot] wird per JS mit dem Vornamen aus der
        URL (?vorname=) befüllt, [data-name-if] nur dann eingeblendet. -->
-  <section class="hero dhero">
+  <section class="hero dhero" data-confetti>
     <span class="hero__glow" aria-hidden="true"></span>
     <span class="hero__sparkles" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -115,10 +115,10 @@
 
         <a class="cta dhero__cta" href="#schritte" data-reveal="6" data-track="cta_steps" data-track-position="hero">
           <span class="cta__label">
-            Deine nächsten Schritte
+            Deine nächsten 2 Schritte
             <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
           </span>
-          <span class="cta__note">Dauert keine 3 Minuten</span>
+          <span class="cta__note">Wichtigster Schritt: 6 kurze Fragen</span>
         </a>
       </div>
 
@@ -132,12 +132,8 @@
            alt="ProvenExpert-Siegel: Von Kunden empfohlen 2026" width="72" height="72" loading="lazy">
       <div class="trustrow__facts">
         <div class="trustfact">
-          <span class="trustfact__num">4,98<span class="trustfact__sub">/5</span></span>
-          <span class="trustfact__label">auf ProvenExpert</span>
-        </div>
-        <div class="trustfact">
-          <span class="trustfact__num">100&nbsp;%</span>
-          <span class="trustfact__label">Weiterempfehlung</span>
+          <span class="trustfact__num">5 Sterne</span>
+          <span class="trustfact__label">auf Google/ProvenExpert</span>
         </div>
         <div class="trustfact">
           <span class="trustfact__num">2.000+</span>
@@ -151,31 +147,69 @@
     </div>
   </section>
 
-  <!-- ================= Die 3 nächsten Schritte =================
-       Jeder Schritt lässt sich abhaken (localStorage, setupDankeSteps in main.js). -->
+  <!-- ================= Die 2 nächsten Schritte =================
+       Jeder Schritt lässt sich abhaken (localStorage, setupDankeSteps in main.js).
+       Bewusst nur zwei: Alles auf dieser Seite zieht auf die 6 Fragen. Die
+       WhatsApp-Community kommt erst nach der Umfrage (danke/geschenk/). -->
   <section class="steps" id="schritte">
     <div class="container">
 
       <div class="steps__head" data-scroll-reveal>
         <span class="section-kicker">Damit Du das Beste rausholst</span>
         <h2 class="section-title">
-          Deine nächsten <span class="accent">4 Schritte</span><span data-name-if>, <span data-name-slot></span></span>
+          Deine nächsten <span class="accent">2 Schritte</span><span data-name-if>, <span data-name-slot></span></span>
         </h2>
         <p class="section-sub">
-          Zusammen keine fünf Minuten. Mach sie am besten jetzt sofort,
-          bevor Du den Tab schließt – danach ist alles erledigt.
+          Der erste ist mir der wichtigste: Mit Deinen Antworten bereite ich den
+          Workshop für <em>Dich</em> vor. Beides zusammen dauert keine fünf Minuten –
+          mach es am besten jetzt sofort, bevor Du den Tab schließt.
         </p>
       </div>
 
       <div class="steps__progress" data-scroll-reveal>
         <div class="steps__bar"><span class="steps__bar-fill" data-steps-fill></span></div>
-        <p class="steps__count"><strong data-steps-count>0</strong> von 4 erledigt</p>
+        <p class="steps__count"><strong data-steps-count>0</strong> von 2 erledigt</p>
       </div>
 
       <ol class="steps__list">
 
-        <li class="step" data-step="kalender" data-scroll-reveal>
+        <!-- Kernschritt: die Umfrage. Steht bewusst an erster Stelle und ist
+             optisch hervorgehoben (.step--key) - hier wird der Lead qualifiziert
+             und der Termin angebahnt. -->
+        <li class="step step--key" data-step="umfrage" data-scroll-reveal>
           <span class="step__num" aria-hidden="true">1</span>
+          <span class="step__check" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <div class="step__body">
+            <span class="step__ribbon">Wichtigster Schritt</span>
+            <h3 class="step__title">Beantworte mir 6 kurze Fragen</h3>
+            <p class="step__text">
+              Ich bereite den Workshop für <em>Dich</em> vor – nicht für irgendeine
+              anonyme Zielgruppe. Sag mir, wo Du gerade stehst und was Dich zurückhält,
+              dann gehe ich im Workshop genau darauf ein.
+            </p>
+            <p class="step__gift">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M12 8S9.5 3 7 3a2.5 2.5 0 0 0 0 5M12 8s2.5-5 5-5a2.5 2.5 0 0 1 0 5"/></svg>
+              Als Dankeschön schenke ich Dir Deinen persönlichen
+              <strong>Finanz-Fahrplan im Wert von 500&nbsp;€</strong>
+            </p>
+            <p class="step__meta">6 Fragen · ca. 2 Minuten</p>
+            <div class="step__actions">
+              <a class="cta step__cta" href="umfrage/" data-carry-name
+                 data-step-action data-track="survey_start" data-track-position="steps">
+                <span class="cta__label">
+                  Fragen beantworten &amp; Geschenk sichern
+                  <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
+                </span>
+                <span class="cta__note">Kostenfrei · nur für Workshop-Teilnehmerinnen</span>
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <li class="step" data-step="kalender" data-scroll-reveal>
+          <span class="step__num" aria-hidden="true">2</span>
           <span class="step__check" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
@@ -209,87 +243,6 @@
           </div>
         </li>
 
-        <!-- Kernschritt: die Umfrage. Optisch hervorgehoben (.step--key),
-             weil hier der Lead qualifiziert und der Termin angebahnt wird. -->
-        <li class="step step--key" data-step="umfrage" data-scroll-reveal>
-          <span class="step__num" aria-hidden="true">2</span>
-          <span class="step__check" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <div class="step__body">
-            <span class="step__ribbon">Wichtigster Schritt</span>
-            <h3 class="step__title">Beantworte mir 6 kurze Fragen</h3>
-            <p class="step__text">
-              Ich bereite den Workshop für <em>Dich</em> vor – nicht für irgendeine
-              anonyme Zielgruppe. Sag mir, wo Du gerade stehst und was Dich zurückhält,
-              dann gehe ich im Workshop genau darauf ein.
-            </p>
-            <p class="step__gift">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M12 8S9.5 3 7 3a2.5 2.5 0 0 0 0 5M12 8s2.5-5 5-5a2.5 2.5 0 0 1 0 5"/></svg>
-              Als Dankeschön schenke ich Dir Deinen persönlichen
-              <strong>Finanz-Fahrplan im Wert von 500&nbsp;€</strong>
-            </p>
-            <p class="step__meta">6 Fragen · ca. 2 Minuten</p>
-            <div class="step__actions">
-              <a class="cta step__cta" href="umfrage/" data-carry-name
-                 data-step-action data-track="survey_start" data-track-position="steps">
-                <span class="cta__label">
-                  Fragen beantworten &amp; Geschenk sichern
-                  <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
-                </span>
-                <span class="cta__note">Kostenfrei · nur für Workshop-Teilnehmerinnen</span>
-              </a>
-            </div>
-          </div>
-        </li>
-
-        <li class="step step--wa" data-step="whatsapp" data-scroll-reveal>
-          <span class="step__num" aria-hidden="true">3</span>
-          <span class="step__check" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <div class="step__body">
-            <h3 class="step__title">Komm in meine WhatsApp-Community</h3>
-            <p class="step__text">
-              Dort bekommst Du Deine Erinnerung kurz vor dem Start, regelmäßige Impulse
-              und den direkten Draht zu mir. Vor dem Workshop melde ich mich persönlich bei Dir.
-            </p>
-            <p class="step__meta">Über 2.000 Frauen sind schon dabei</p>
-            <div class="step__actions">
-              <a class="btn-wa" target="_blank" rel="noopener"
-                 data-step-action data-track="whatsapp_join" data-track-position="steps"
-                 data-wa-sign="Viele Grüße,"
-                 href="https://api.whatsapp.com/send/?phone=%2B4915560647029&amp;text=Hallo+Alexandra%21+Ich+m%C3%B6chte+in+deine+WhatsApp-Community+und+meine+Workshop-Erinnerungen+erhalten.&amp;type=phone_number&amp;app_absent=0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm5.424-7.403c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.884-.788-1.48-1.761-1.654-2.059-.173-.297-.019-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.199.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.073.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-                Community beitreten
-              </a>
-            </div>
-          </div>
-        </li>
-
-        <li class="step" data-step="videos" data-scroll-reveal>
-          <span class="step__num" aria-hidden="true">4</span>
-          <span class="step__check" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <div class="step__body">
-            <h3 class="step__title">Wenn Du noch Fragen hast: 5 kurze Antwort-Videos</h3>
-            <p class="step__text">
-              „Bin ich zu alt?", „Ist das seriös?", „Ich habe Angst vor der Technik" –
-              die häufigsten Fragen habe ich Dir persönlich beantwortet.
-              Kein Muss, aber es nimmt die letzten Zweifel.
-            </p>
-            <p class="step__meta">5 Videos · je 1–2 Minuten</p>
-            <div class="step__actions">
-              <a class="btn-cal" href="#antworten"
-                 data-step-action data-track="goto_answers" data-track-position="steps">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                Videos ansehen
-              </a>
-            </div>
-          </div>
-        </li>
-
       </ol>
     </div>
   </section>
@@ -315,7 +268,6 @@
           <div class="vplayer vplayer--portrait">
             <button class="vplayer__media" type="button"
                     data-video-id="1168415011" data-video-name="antwort_zu_alt" data-video-base="vplayer"
-                    data-step-action data-step-target="videos"
                     aria-label="Video abspielen: Bin ich zu alt dafür?">
               <img class="vplayer__thumb" src="../assets/img/answer-alt.jpg"
                    alt="Alexandra Feuerer beantwortet die Frage: Bin ich zu alt dafür?"
@@ -333,7 +285,6 @@
           <div class="vplayer vplayer--portrait">
             <button class="vplayer__media" type="button"
                     data-video-id="1168414050" data-video-name="antwort_serioes" data-video-base="vplayer"
-                    data-step-action data-step-target="videos"
                     aria-label="Video abspielen: Ist das seriös oder Zockerei?">
               <img class="vplayer__thumb" src="../assets/img/answer-serioes.jpg"
                    alt="Alexandra Feuerer beantwortet die Frage: Ist das seriös oder Zockerei?"
@@ -351,7 +302,6 @@
           <div class="vplayer vplayer--portrait">
             <button class="vplayer__media" type="button"
                     data-video-id="1168414626" data-video-name="antwort_technik" data-video-base="vplayer"
-                    data-step-action data-step-target="videos"
                     aria-label="Video abspielen: Ich habe Angst vor der Technik">
               <img class="vplayer__thumb" src="../assets/img/answer-technik.jpg"
                    alt="Alexandra Feuerer beantwortet die Frage: Ich habe Angst vor der Technik"
@@ -369,7 +319,6 @@
           <div class="vplayer vplayer--portrait">
             <button class="vplayer__media" type="button"
                     data-video-id="1168414358" data-video-name="antwort_verkauf" data-video-base="vplayer"
-                    data-step-action data-step-target="videos"
                     aria-label="Video abspielen: Wird mir hier nur was verkauft?">
               <img class="vplayer__thumb" src="../assets/img/answer-verkauf.jpg"
                    alt="Alexandra Feuerer beantwortet die Frage: Wird mir hier nur was verkauft?"
@@ -387,7 +336,6 @@
           <div class="vplayer vplayer--portrait">
             <button class="vplayer__media" type="button"
                     data-video-id="1168414816" data-video-name="antwort_millionen" data-video-base="vplayer"
-                    data-step-action data-step-target="videos"
                     aria-label="Video abspielen: Brauche ich Millionen dafür?">
               <img class="vplayer__thumb" src="../assets/img/answer-millionen.jpg"
                    alt="Alexandra Feuerer beantwortet die Frage: Brauche ich Millionen dafür?"
@@ -653,34 +601,38 @@
     </div>
   </section>
 
-  <!-- ================= Abschluss: WhatsApp-Community ================= -->
-  <section class="wacta" id="community">
+  <!-- ================= Abschluss: zurück zu den 6 Fragen =================
+       Bewusst derselbe CTA wie in Schritt 1 – diese Seite hat nur ein Ziel.
+       Die WhatsApp-Community stand hier früher und ist bewusst raus: Sie kommt
+       erst nach der Umfrage (danke/geschenk/), wenn das Commitment steht. -->
+  <section class="wacta" id="fragen">
     <div class="container">
       <div class="wacta__box" data-scroll-reveal>
 
         <div class="wacta__body">
-          <span class="wacta__chip">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
-            Über 2.000 Frauen sind schon dabei
+          <span class="wacta__chip wacta__chip--gold">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M12 8S9.5 3 7 3a2.5 2.5 0 0 0 0 5M12 8s2.5-5 5-5a2.5 2.5 0 0 1 0 5"/></svg>
+            Dein Finanz-Fahrplan im Wert von 500 €
           </span>
 
           <p class="wacta__quote">
-            „Du musst diesen Weg nicht alleine gehen – und Du sollst ihn auch nicht
-            alleine gehen müssen."
+            „Sag mir, wo Du stehst – dann baue ich den Workshop um Deine Fragen herum."
           </p>
 
           <p class="wacta__text">
-            In meiner WhatsApp-Community bekommst Du Deine Workshop-Erinnerung,
-            regelmäßige Impulse und den direkten Draht zu mir. Ein Klick, jederzeit kündbar.
+            6 Fragen, keine zwei Minuten. Ich lese jede Antwort selbst und bereite den
+            22. September damit für Dich vor. Und als Dankeschön schenke ich Dir Deinen
+            persönlichen Finanz-Fahrplan – den erstellen wir gemeinsam in 30 Minuten.
           </p>
 
-          <a class="btn-wa btn-wa--lg" target="_blank" rel="noopener"
-             data-step-action data-step-target="whatsapp"
-             data-track="whatsapp_join" data-track-position="final"
-             data-wa-sign="Viele Grüße,"
-             href="https://api.whatsapp.com/send/?phone=%2B4915560647029&amp;text=Hallo+Alexandra%21+Ich+m%C3%B6chte+in+deine+WhatsApp-Community+und+meine+Workshop-Erinnerungen+erhalten.&amp;type=phone_number&amp;app_absent=0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.449A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.423-8.452zM12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm5.424-7.403c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.884-.788-1.48-1.761-1.654-2.059-.173-.297-.019-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.199.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.073.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-            Jetzt der Community beitreten
+          <a class="cta" href="umfrage/" data-carry-name
+             data-step-action data-step-target="umfrage"
+             data-track="survey_start" data-track-position="final">
+            <span class="cta__label">
+              Jetzt die 6 Fragen beantworten
+              <svg width="24" height="13" viewBox="0 0 24 13" fill="currentColor" aria-hidden="true"><path d="M7 0h4.2L5.2 13H1z"/><path d="M14.4 0h4.2l-6 13h-4.2z"/><path d="M21.8 0H24l-4.8 13h-3.4z" opacity="0.65"/></svg>
+            </span>
+            <span class="cta__note">Kostenfrei · nur für Workshop-Teilnehmerinnen</span>
           </a>
 
           <p class="wacta__signoff">
@@ -715,6 +667,6 @@
     </div>
   </footer>
 
-  <script src="../assets/js/main.js?v=20260819"></script>
+  <script src="../assets/js/main.js?v=20260826"></script>
 </body>
 </html>

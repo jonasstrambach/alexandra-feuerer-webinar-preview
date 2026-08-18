@@ -1,0 +1,28 @@
+# ============================================================
+# Alexandra Feuerer – Schutz für den ActiveCampaign-Proxy
+# ------------------------------------------------------------
+# Erreichbar bleiben soll nur activecampaign.php. Alles andere in
+# diesem Ordner (Zugangsdaten, Logs, Zwischenspeicher) darf nicht
+# über den Browser abrufbar sein.
+#
+# Nur relevant auf Apache. Auf Netlify/Vercel/Cloudflare greift diese
+# Datei nicht – dort liegen die Zugangsdaten ohnehin in Environment-
+# Variablen und nicht im Dateisystem.
+# ============================================================
+
+# Kein Verzeichnis-Listing
+Options -Indexes
+
+# Zugangsdaten, Beispiel-Config, Logs und die Serverless-Variante sperren
+<FilesMatch "^(config\.php|config\.sample\.php|.*\.log|.*\.mjs|README\.md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Zwischenspeicher für Feld- und Tag-IDs
+RedirectMatch 404 ^/api/\.cache(/|$)

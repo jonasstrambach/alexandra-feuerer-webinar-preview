@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/main.css?v=20260819">
+  <link rel="stylesheet" href="../../assets/css/main.css?v=20260826">
 
   <!-- Google Tag Manager: Container-ID eintragen und Kommentar entfernen -->
   <!--
@@ -29,7 +29,7 @@
         <img class="brand__logo" src="../../assets/img/logo-blau.svg" alt="Alexandra Feuerer Logo" width="108" height="104">
         <span class="brand__text">
           <span class="brand__name">Alexandra Feuerer</span>
-          <span class="brand__claim">Finanzielle Freiheit durch Wissen</span>
+          <span class="brand__claim">Einfach, sicher an der Börse investieren lernen</span>
         </span>
       </a>
     </div>
@@ -147,14 +147,14 @@
           <div class="quiz__fields">
             <div>
               <label for="q-vorname">Vorname*</label>
-              <input type="text" id="q-vorname" name="vorname" autocomplete="given-name"
+              <input type="text" id="q-vorname" name="vorname" placeholder="Dein Vorname*" autocomplete="given-name"
                      maxlength="40" aria-describedby="q-vorname-error" required>
               <p class="form__error" id="q-vorname-error" hidden>Bitte gib Deinen Vornamen ein.</p>
             </div>
 
             <div>
               <label for="q-email">E-Mail-Adresse*</label>
-              <input type="email" id="q-email" name="email" autocomplete="email"
+              <input type="email" id="q-email" name="email" placeholder="Deine E-Mail-Adresse*" autocomplete="email"
                      maxlength="80" aria-describedby="q-email-error" required>
               <p class="form__error" id="q-email-error" hidden>Bitte gib eine gültige E-Mail-Adresse ein (z.&nbsp;B. name@domain.de).</p>
             </div>
@@ -185,7 +185,7 @@
                   <option value="+90">🇹🇷 +90</option>
                   <option value="+1">🇺🇸 +1</option>
                 </select>
-                <input type="tel" id="q-telefon" name="telefon" placeholder="151 23456789"
+                <input type="tel" id="q-telefon" name="telefon" placeholder="Deine Telefonnummer*"
                        inputmode="tel" autocomplete="tel-national" maxlength="20"
                        aria-describedby="q-telefon-error" required>
               </div>
@@ -203,6 +203,11 @@
         <!-- Wird per JS befüllt (Variante + Kampagnen-Daten) -->
         <input type="hidden" name="variant" id="q-variant">
         <input type="hidden" name="utms" id="q-utms">
+
+        <!-- Honeypot gegen Spam-Bots – siehe Kommentar in index.html -->
+        <div class="hp" aria-hidden="true">
+          <label for="q-website">Dieses Feld bitte leer lassen</label>
+          <input type="text" id="q-website" name="website" tabindex="-1" autocomplete="off"></div>
 
         <div class="quiz__nav">
           <button class="quiz__back" type="button" data-quiz-back>
@@ -234,6 +239,6 @@
     </div>
   </footer>
 
-  <script src="../../assets/js/main.js?v=20260819"></script>
+  <script src="../../assets/js/main.js?v=20260826"></script>
 </body>
 </html>

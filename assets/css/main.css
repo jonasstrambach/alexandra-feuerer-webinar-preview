@@ -545,6 +545,32 @@ strong {
   color: rgba(245, 227, 184, 0.78);
 }
 
+/* Kompakte Variante: gleicher Look, aber leiser – für sekundäre Sprungmarken
+   (z. B. Hero -> Kalender), die dem Haupt-CTA einer Seite nicht die Show stehlen. */
+.cta--sm {
+  padding: 12px 30px 11px;
+  border-radius: 12px;
+  box-shadow:
+    0 12px 26px rgba(39, 51, 73, 0.28),
+    0 3px 12px rgba(191, 161, 74, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.cta--sm::before {
+  inset: 4px;
+  border-radius: 8px;
+}
+
+.cta--sm .cta__label {
+  gap: 10px;
+  font-size: 1.02rem;
+}
+
+.cta--sm .cta__label svg {
+  width: 20px;
+  height: 11px;
+}
+
 /* Trust-Zeile mit ProvenExpert-Siegel */
 .hero__trust {
   display: flex;
@@ -1177,6 +1203,335 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
 .about__cta {
   margin-top: 34px;
+}
+
+/* ----------------------------------------------------------------
+   Mythen-Check ("#mythen")
+   Zwei Spalten kompakter Karten: Vorurteil als Serif-Zitat, darunter die
+   Antwort. Absichtlich flach gehalten, damit acht Einwaende nicht die
+   halbe Seite fuellen.
+   ---------------------------------------------------------------- */
+.myths {
+  position: relative;
+  padding: 74px 0 78px;
+  background:
+    radial-gradient(700px 400px at 88% 0%, rgba(205, 186, 153, 0.2), transparent 66%),
+    var(--cream);
+  overflow: clip;
+}
+
+.myths__head {
+  max-width: 60ch;
+  margin-bottom: 34px;
+}
+
+.myths__lead {
+  margin: 14px 0 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.myths__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.myth {
+  position: relative;
+  padding: 20px 22px 20px 24px;
+  border: 1px solid rgba(191, 161, 74, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+/* Goldener Balken links – ersetzt ein Icon und haelt die Karte flach */
+.myth::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--champagne-soft), var(--gold-deep));
+}
+
+.myth__claim {
+  margin: 0 0 9px;
+  font-family: var(--font-serif);
+  font-size: 1.12rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--navy);
+}
+
+.myth__truth {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+.myth__tag {
+  display: inline-block;
+  margin-right: 7px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+@media (max-width: 860px) {
+  .myths__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .myths {
+    padding: 56px 0 60px;
+  }
+
+  .myths__head {
+    margin-bottom: 26px;
+  }
+
+  .myth {
+    padding: 17px 18px 17px 20px;
+  }
+
+  .myth__claim {
+    font-size: 1.04rem;
+  }
+
+  .myth__truth {
+    font-size: 0.86rem;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Persönlicher Brief ("#brief")
+   Papier-Karte auf Creme-Grund, leicht gekippt. Der Text wird beim
+   Scrollen wortweise aufgedeckt – die Wörter kommen aus main.js
+   (setupLetter) als .letter__w und werden mit .is-inked sichtbar.
+   Wichtig: Das Abdunkeln hängt an html[data-js], damit der Brief ohne
+   JavaScript vollständig lesbar bleibt.
+   ---------------------------------------------------------------- */
+.letter {
+  position: relative;
+  padding: 76px 0 84px;
+  background:
+    radial-gradient(780px 440px at 12% 0%, rgba(249, 226, 181, 0.38), transparent 66%),
+    radial-gradient(620px 380px at 92% 100%, rgba(205, 186, 153, 0.22), transparent 70%),
+    var(--cream);
+  overflow: clip;
+}
+
+.letter__wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.letter__paper {
+  position: relative;
+  width: min(768px, 100%);
+  padding: 52px 56px 44px;
+  transform: rotate(-0.35deg);
+  border: 1px solid rgba(191, 161, 74, 0.26);
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, #fffefb 0%, #fffdf6 100%);
+  box-shadow:
+    0 28px 64px -30px rgba(52, 66, 88, 0.36),
+    0 2px 14px -8px rgba(52, 66, 88, 0.14);
+}
+
+/* Goldener Rand links wie beim Notizblock */
+.letter__paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 26px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(191, 161, 74, 0.32) 12%, rgba(191, 161, 74, 0.32) 88%, transparent);
+}
+
+/* Klebestreifen oben – macht aus der Karte eine angepinnte Notiz */
+.letter__tape {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 128px;
+  height: 26px;
+  transform: translateX(-50%) rotate(-1.6deg);
+  background: linear-gradient(180deg, rgba(249, 226, 181, 0.82), rgba(205, 186, 153, 0.62));
+  border-left: 1px dashed rgba(255, 255, 255, 0.5);
+  border-right: 1px dashed rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 6px -3px rgba(52, 66, 88, 0.3);
+}
+
+.letter__head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(191, 161, 74, 0.2);
+}
+
+.letter__avatar {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(191, 161, 74, 0.4);
+}
+
+.letter__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.letter__kicker {
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  font-weight: 500;
+}
+
+.letter__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 400;
+}
+
+.letter__body p {
+  margin: 0 0 18px;
+  font-size: 1.04rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+.letter__body p:last-child {
+  margin-bottom: 0;
+}
+
+.letter__body em {
+  font-style: italic;
+  color: var(--navy);
+}
+
+.letter__body strong {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* Der Scroll-Effekt: noch nicht "geschriebene" Wörter stehen blass da.
+   Ohne data-js greift die Regel nicht – dann ist alles sofort lesbar. */
+html[data-js] .letter__body .letter__w {
+  opacity: 0.15;
+  transition: opacity 480ms ease;
+}
+
+html[data-js] .letter__body .letter__w.is-inked {
+  opacity: 1;
+}
+
+.letter__sign {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 30px;
+}
+
+/* Unterschrift: echter SVG-Pfad, der beim Scrollen gezeichnet wird.
+   Die Zuege liegen in Schreibreihenfolge im Markup – main.js laesst sie
+   nacheinander per stroke-dashoffset auflaufen. Ohne JS steht die
+   Unterschrift sofort fertig da (keine dasharray gesetzt). */
+.letter__sig {
+  display: block;
+  width: min(304px, 80%);
+  height: auto;
+  overflow: visible;
+  color: var(--gold-deep);
+  transform: rotate(-2.2deg);
+  transform-origin: left center;
+}
+
+.letter__role {
+  margin-top: 10px;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.letter__cta {
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(191, 161, 74, 0.2);
+}
+
+@media (max-width: 720px) {
+  .letter {
+    padding: 58px 0 64px;
+  }
+
+  .letter__paper {
+    padding: 40px 26px 34px;
+    transform: none;
+  }
+
+  .letter__paper::before {
+    left: 13px;
+  }
+
+  .letter__head {
+    gap: 13px;
+    margin-bottom: 22px;
+  }
+
+  .letter__avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .letter__body p {
+    font-size: 0.98rem;
+    line-height: 1.8;
+  }
+
+  .letter__cta .cta {
+    width: 100%;
+  }
+
+  .letter__sig {
+    width: min(232px, 86%);
+  }
+}
+
+/* Kein Aufdecken bei reduzierter Bewegung – der Brief steht sofort da.
+   Das JS überspringt den Effekt zusätzlich, das hier ist der CSS-Fallback. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-js] .letter__body .letter__w,
+  html[data-js] .letter__body .letter__w.is-inked {
+    opacity: 1;
+    transition: none;
+  }
+
+  .letter__paper,
+  .letter__sig {
+    transform: none;
+  }
 }
 
 /* ============================================================
@@ -2077,14 +2432,24 @@ html[data-js] [data-scroll-reveal].is-revealed {
   gap: 12px;
 }
 
+/* Labels sind bewusst unsichtbar (Kundenwunsch: minimalere Formulare) –
+   die Beschriftung steht im Placeholder. Sie bleiben aber im DOM und per
+   `for` verknüpft, damit Screenreader und Autofill das Feld weiter kennen.
+   Deshalb kein `display:none`, sondern aus dem Bild geclippt.
+   Wer ein Feld ergänzt: Placeholder-Text nicht vergessen, sonst steht dort
+   eine leere Box. */
 .form label,
 .quiz__fields label {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--navy);
-  margin-bottom: 5px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .form input,
@@ -2190,6 +2555,34 @@ html[data-js] [data-scroll-reveal].is-revealed {
   flex-shrink: 0;
 }
 
+/* ---- Honeypot ----
+   Bewusst kein display:none und kein hidden-Attribut: Beides erkennen
+   viele Spam-Bots und lassen das Feld dann leer. Aus dem Sichtfeld
+   geschoben füllen sie es aus – und werden serverseitig verworfen. */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---- Sendezustand ----
+   Zwischen Klick und Weiterleitung wartet die Seite kurz auf das CRM.
+   Ohne sichtbares Feedback wirkt der Button in dieser Zeit kaputt. */
+.cta.is-sending {
+  opacity: 0.72;
+  cursor: progress;
+}
+
+.cta.is-sending .cta__label {
+  opacity: 0.85;
+}
+
+.cta:disabled {
+  pointer-events: none;
+}
+
 /* ============================================================
    Danke-Seite
    ============================================================ */
@@ -2203,6 +2596,19 @@ html[data-js] [data-scroll-reveal].is-revealed {
 
 .has-name [data-name-if] {
   display: inline;
+}
+
+/* ---- Konfetti beim Ankommen ----
+   Das Canvas haengt main.js (setupConfetti) auf Seiten mit [data-confetti]
+   ein und raeumt es nach dem letzten Schnipsel selbst wieder ab. Liegt
+   ueber allem (auch ueber der Sticky-Leiste, z-index 60), faengt aber
+   keine Klicks ab. Das Modal ist ein <dialog> und liegt im Top-Layer –
+   also ohnehin darueber. */
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
 }
 
 /* ---- Hero der Danke-Seite ----
@@ -2248,8 +2654,8 @@ html[data-js] [data-scroll-reveal].is-revealed {
    (data-name-if) erscheint nur, wenn einer übergeben wurde. */
 .dhero__hello {
   display: block;
-  margin-bottom: 4px;
-  font-size: 0.56em;
+  margin-bottom: 10px;
+  font-size: 0.62em;
   color: var(--gold-deep);
 }
 
@@ -2266,12 +2672,13 @@ html[data-js] [data-scroll-reveal].is-revealed {
   color: var(--navy);
 }
 
-/* Organisatorischer Hinweis – bewusst leiser als der Lead */
+/* Organisatorischer Hinweis – gleiche Schriftgroesse wie der Lead
+   (Kundenwunsch), nur der Ton bleibt zurueckhaltend. */
 .dhero__note {
   max-width: 52ch;
   margin: 12px 0 0;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 1.02rem;
+  line-height: 1.7;
   color: var(--text-muted);
 }
 
@@ -2517,11 +2924,6 @@ html[data-js] [data-scroll-reveal].is-revealed {
   font-weight: 500;
   line-height: 1.1;
   color: var(--gold-deep);
-}
-
-.trustfact__sub {
-  font-size: 0.6em;
-  color: var(--text-muted);
 }
 
 .trustfact__label {
@@ -3421,6 +3823,14 @@ html[data-js] [data-scroll-reveal].is-revealed {
     padding: 16px 20px;
   }
 
+  /* Die kompakte Variante bleibt auch auf schmalen Screens kompakt –
+     sie ist eine Sprungmarke, kein Formular-Abschluss. */
+  .cta--sm {
+    width: auto;
+    max-width: 100%;
+    padding: 12px 24px 11px;
+  }
+
   .float-card__sub {
     display: none;
   }
@@ -3611,7 +4021,20 @@ html[data-js] [data-scroll-reveal].is-revealed {
   }
 
   .dhero__note {
-    font-size: 0.84rem;
+    font-size: 0.95rem;
+  }
+
+  /* Der personalisierte Zusatz (" fuer Dich, Anna") wuerde das Label auf zwei
+     Zeilen zwingen. Auf Mobile bleibt deshalb nur der Kernsatz stehen –
+     gleiches Prinzip wie .chip__opt bei den Meta-Chips. */
+  .dhero__video-label {
+    font-size: 0.76rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .has-name .dhero__video-label [data-name-if] {
+    display: none;
   }
 
   .dhero__when {
@@ -3659,8 +4082,7 @@ html[data-js] [data-scroll-reveal].is-revealed {
     padding-right: 30px;
   }
 
-  .step__actions .btn-cal,
-  .step__actions .btn-wa {
+  .step__actions .btn-cal {
     flex: 1 1 auto;
     justify-content: center;
   }
@@ -3683,16 +4105,30 @@ html[data-js] [data-scroll-reveal].is-revealed {
     padding: 15px 20px;
   }
 
+  /* Die drei Fakten müssen in EINE Reihe passen (Kundenwunsch). Deshalb feste
+     Drittel-Spalten ohne Umbruch – lange Labels brechen innerhalb ihrer Spalte
+     statt den vierten Fakt in eine zweite Reihe zu schieben. */
   .trustrow__facts {
-    gap: 14px 22px;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .trustfact {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0;
   }
 
   .trustfact__num {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
+    white-space: nowrap;
   }
 
   .trustfact__label {
-    font-size: 0.72rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
   }
 }
 
@@ -3705,6 +4141,11 @@ html[data-js] [data-scroll-reveal].is-revealed {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Fallback – setupConfetti startet hier ohnehin nicht */
+  .confetti {
+    display: none;
+  }
+
   .steps__bar-fill,
   .step,
   .step__num,
@@ -4108,6 +4549,22 @@ html[data-js] [data-scroll-reveal].is-revealed {
   text-align: center;
 }
 
+/* Kleines Porträt über dem Badge – der Hero-Text ist in der Ich-Form
+   geschrieben ("Ich lese jede einzelne selbst"), das Bild gibt ihm ein
+   Gesicht. Quelle ist der 160x160-Avatar, deshalb nicht groesser als 100px. */
+.ghero__me {
+  display: block;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--cream);
+  box-shadow:
+    0 0 0 2px rgba(191, 161, 74, 0.55),
+    0 10px 26px rgba(52, 66, 88, 0.18);
+}
+
 .ghero h1 {
   margin: 18px 0 16px;
   font-size: clamp(1.95rem, 3.2vw, 2.75rem);
@@ -4128,6 +4585,12 @@ html[data-js] [data-scroll-reveal].is-revealed {
   font-weight: 500;
   line-height: 1.6;
   color: var(--navy-deep);
+}
+
+/* Sprungmarke auf den Kalender – bewusst die kleine CTA-Variante: der
+   eigentliche Abschluss ist das Calendly-Widget direkt darunter. */
+.ghero__cta {
+  margin-top: 24px;
 }
 
 /* ---- Terminbuchung: Calendly direkt eingebettet ---- */
@@ -4297,6 +4760,163 @@ html[data-js] [data-scroll-reveal].is-revealed {
   color: var(--text-muted);
 }
 
+/* ---- Kalender-Erinnerung (Geschenk-Seite, vor dem WhatsApp-Abschluss) ----
+   Bewusst als flache, breite "Widget"-Leiste gebaut und nicht als zweite
+   grosse Box wie .wacta__box – sonst konkurrieren zwei Karten um dieselbe
+   Aufmerksamkeit. Buttons nutzen .btn-cal aus dem Danke-Seiten-Block. */
+.calcta {
+  padding: 0 0 8px;
+  background: var(--cream);
+}
+
+.calcta__box {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 26px;
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 26px 30px;
+  background: linear-gradient(160deg, var(--white) 0%, var(--cream-warm) 100%);
+  border: 1px solid rgba(191, 161, 74, 0.34);
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Kalenderblatt mit dem Datum – gibt dem Block auf einen Blick den Kontext */
+.calcta__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 66px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--white);
+  border: 1px solid rgba(191, 161, 74, 0.45);
+  box-shadow: 0 6px 16px rgba(52, 66, 88, 0.1);
+  overflow: hidden;
+}
+
+.calcta__date-m {
+  width: 100%;
+  padding: 4px 0 3px;
+  background: var(--cta-grad);
+  color: var(--navy-deep);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.calcta__date-d {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-serif);
+  font-size: 1.72rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--navy-deep);
+}
+
+.calcta__chip {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.calcta__title {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-size: clamp(1.16rem, 2vw, 1.38rem);
+  font-weight: 500;
+  line-height: 1.3;
+  text-wrap: balance;
+  color: var(--navy-deep);
+}
+
+.calcta__text {
+  max-width: 52ch;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.calcta__meta {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.calcta__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 176px;
+}
+
+.calcta__actions .btn-cal {
+  justify-content: flex-start;
+}
+
+@media (max-width: 900px) {
+  /* Buttons unter den Text, Datum bleibt neben der Ueberschrift */
+  .calcta__box {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 18px 20px;
+    padding: 24px 22px;
+  }
+
+  .calcta__actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .calcta__actions .btn-cal {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .calcta__box {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px 18px;
+  }
+
+  .calcta__date {
+    width: 54px;
+    height: 58px;
+  }
+
+  .calcta__date-d {
+    font-size: 1.5rem;
+  }
+
+  /* Ohne den Wochentag passt die Termin-Zeile in eine Zeile –
+     gleiches Prinzip wie .chip__opt bei den Meta-Chips. */
+  .calcta__meta-day {
+    display: none;
+  }
+
+  .calcta__actions .btn-cal {
+    flex: 1 1 100%;
+  }
+}
+
 /* ============================================================
    Responsive: Quiz + Geschenk-Seite
    ============================================================ */
@@ -4359,6 +4979,22 @@ html[data-js] [data-scroll-reveal].is-revealed {
   .ghero__inner {
     padding-top: 26px;
     padding-bottom: 34px;
+  }
+
+  .ghero__me {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 14px;
+  }
+
+  .ghero__cta {
+    margin-top: 20px;
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+  .ghero__cta .cta__label {
+    font-size: 0.95rem;
   }
 
   .ghero h1 {
@@ -4837,5 +5473,143 @@ html[data-js] [data-scroll-reveal].is-revealed {
     background: none;
     -webkit-text-fill-color: currentColor;
     color: var(--gold-deep);
+  }
+}
+
+
+/* ================================================================
+   Mobile-Nachtraege: Karten-Stapel fuer den Mythen-Check und
+   Karussell fuer die Video-Testimonials. Stehen bewusst am Dateiende,
+   damit sie die frueheren Mobile-Regeln der beiden Sektionen
+   ueberschreiben.
+   ================================================================ */
+
+/* ---- Mythen-Check als Karten-Stapel (#mythen) ----
+   Gleiche Mechanik wie Vorteile und Bewertungen (setupCardStack in
+   main.js): Die Karten kleben untereinander fest, die naechste schiebt
+   sich ueber die vorige, die darunter wird kleiner und dunkler.
+   Wichtig: Die Karte braucht hier einen deckenden Hintergrund – normal
+   ist sie halbtransparent, gestapelt schiene der Text durch.
+   Der Versatz ist mit 9px knapper als bei den Vorteilen, weil hier
+   acht statt sechs Karten uebereinanderliegen. */
+@media (max-width: 600px) and (prefers-reduced-motion: no-preference) {
+  html[data-js] .myths__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  html[data-js] .myths__grid .myth {
+    position: sticky;
+    top: calc(16px + var(--stack-i, 0) * 9px);
+    transform-origin: center top;
+    /* Stapel-Effekt ersetzt hier die Scroll-Reveal-Animation */
+    opacity: 1;
+    transform: none;
+    transition: none;
+    background: #fff;
+    box-shadow: 0 -14px 30px rgba(52, 66, 88, 0.14);
+    will-change: transform, filter;
+  }
+
+  html[data-js] .myths__grid .myth:nth-child(2) { --stack-i: 1; }
+  html[data-js] .myths__grid .myth:nth-child(3) { --stack-i: 2; }
+  html[data-js] .myths__grid .myth:nth-child(4) { --stack-i: 3; }
+  html[data-js] .myths__grid .myth:nth-child(5) { --stack-i: 4; }
+  html[data-js] .myths__grid .myth:nth-child(6) { --stack-i: 5; }
+  html[data-js] .myths__grid .myth:nth-child(7) { --stack-i: 6; }
+  html[data-js] .myths__grid .myth:nth-child(8) { --stack-i: 7; }
+}
+
+/* ---- Video-Testimonials als Karussell (#stimmen, nur Mobile) ----
+   Auf Desktop bleibt das 2x2-Grid unveraendert. Die Steuerung ist
+   grundsaetzlich aus und wird nur eingeblendet, wenn der Track
+   tatsaechlich ueberlaeuft – auf Desktop passiert das nie. */
+.stories__controls {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .stories__grid {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: none;
+    gap: 14px;
+    overflow-x: auto;
+    /* Nur horizontal scrollen: ohne explizites hidden rechnet overflow-y
+       auf auto – der Track liesse sich dann vertikal verwischen. */
+    overflow-y: hidden;
+    /* Am Ende des Tracks nicht die Zurueck-Wischgeste ausloesen */
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 4px 2px 12px;
+  }
+
+  .stories__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stories__grid .story {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+  }
+
+  /* Reveal ohne Y-Verschiebung – translateY ragt sonst unten aus dem
+     Scroll-Container und wird vom overflow-y: hidden beschnitten. */
+  html[data-js] .stories__grid .story[data-scroll-reveal] {
+    transform: none;
+  }
+
+  .stories__slider.has-overflow .stories__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  /* Helle Sektion – daher Navy/Gold statt der Champagner-Toene
+     aus dem dunklen Bewertungs-Slider. */
+  .stories__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(191, 161, 74, 0.5);
+    background: rgba(249, 226, 181, 0.16);
+    color: var(--gold-deep);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .stories__arrow:disabled {
+    opacity: 0.32;
+    cursor: default;
+  }
+
+  .stories__dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stories__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(52, 66, 88, 0.22);
+    cursor: pointer;
+    transition: background 0.25s ease, width 0.25s ease;
+  }
+
+  .stories__dot.is-active {
+    width: 22px;
+    background: var(--gold-deep);
   }
 }

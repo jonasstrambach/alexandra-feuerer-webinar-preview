@@ -85,6 +85,34 @@ return array(
   'auto_create_tags'   => true,
   'auto_create_fields' => true,
 
+  /* ---------- Freie Plaetze (Verknappungs-Anzeige) ----------
+     Die Landing Page kann anzeigen, wie viele Plaetze noch frei sind.
+     Gezaehlt wird ausschliesslich der echte Stand in ActiveCampaign.
+
+     0 schaltet die Anzeige ab – dann bleibt der statische Text stehen
+     ("Maximal 500 Teilnehmer – danach ist Anmeldeschluss").
+
+     Hinweis zur Wirkung: Die gefuehlte Knappheit kommt vom Verhaeltnis,
+     nicht von der Restzahl. "Noch 32 von 150" wirkt deutlich staerker
+     als "noch 320 von 500". Wer mehr Dringlichkeit will, setzt das
+     Limit realistisch tiefer, statt die Zahl zu frisieren. */
+  'seats_limit' => 500,
+
+  /* Woran wird gezaehlt? Der Termin-Tag ist der genauere Weg, weil ein
+     neuer Workshop damit wieder bei null anfaengt. Leer lassen, um
+     stattdessen die Kontakte der Liste zu zaehlen. */
+  'seats_tag' => 'webinar-2026-09-22',
+
+  /* Wie lange der Zaehlerstand zwischengespeichert wird (Sekunden).
+     300 = hoechstens alle 5 Minuten ein API-Aufruf, egal wie viel
+     Traffic die Seite hat. */
+  'seats_cache_ttl' => 300,
+
+  /* Eigenes Limit pro IP und Stunde fuer die Anzeige. Bewusst getrennt
+     von 'rate_limit', damit haeufiges Blaettern nie eine echte
+     Anmeldung blockiert. */
+  'seats_rate_limit' => 120,
+
   /* ---------- Sicherheit ----------
      Nur Anfragen von diesen Domains werden angenommen. Ohne Eintrag
      (leeres Array) wird die Herkunft nicht geprüft. */
